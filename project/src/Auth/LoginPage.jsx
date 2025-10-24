@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../Context/AuthContext.jsx";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -14,14 +14,12 @@ function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
-      // Fetch users from backend
       const response = await fetch(`http://localhost:5000/users?email=${email}`);
       const data = await response.json();
-      
+
       if (data.length && data[0].password === password) {
-        // Create user object with all necessary fields
         const userData = {
           id: data[0].id,
           firstName: data[0].firstName,
@@ -29,16 +27,23 @@ function LoginPage() {
           email: data[0].email,
           role: data[0].role || "user",
           cart: data[0].cart || [],
-          wishlist: data[0].wishlist || []
+          wishlist: data[0].wishlist || [],
         };
-        
-        // Store in localStorage
+
+        //  Store user in localStorage first
         localStorage.setItem("userLoggedIn", JSON.stringify(userData));
-        
-        // Update context
+        //  Update context
         login(userData);
-        
-        navigate("/");
+
+        //  Navigate based on role AFTER login
+        if (userData.role.toLowerCase() === "admin") {
+          navigate("/dashboard", { replace: true });
+          // toast.success("admin login success")
+        }if(userData.isActive===true){
+          navigate(navigate("/", { replace: true }))
+          // toast.success("user login success")
+        }
+
       } else {
         toast.error("Invalid email or password");
       }

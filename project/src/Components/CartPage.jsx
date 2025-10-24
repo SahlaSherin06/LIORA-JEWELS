@@ -10,28 +10,54 @@ export default function CartPage() {
   const { isLoggedIn } = useContext(AuthContext);
   const navigate = useNavigate();
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [cartItemsWithStock, setCartItemsWithStock] = useState([]);
 
   useEffect(() => {
-    // Check both AuthContext and localStorage to ensure user is really logged in
     const checkAuthentication = () => {
       const userLoggedIn = localStorage.getItem("userLoggedIn");
       
       if (!isLoggedIn && !userLoggedIn) {
-        // Definitely not logged in
         navigate("/login");
       } else {
-        // Either AuthContext says logged in OR localStorage has user data
         setIsCheckingAuth(false);
       }
     };
 
-    // Small delay to allow AuthContext to initialize
     const timer = setTimeout(checkAuthentication, 100);
     
     return () => clearTimeout(timer);
   }, [isLoggedIn, navigate]);
 
-  // Show loading while checking authentication
+  // Fetch latest stock for cart items
+  useEffect(() => {
+    const fetchCartItemsStock = async () => {
+      const updatedCart = await Promise.all(
+        cart.map(async (item) => {
+          try {
+            const response = await fetch(`http://localhost:5000/products/${item.id}`);
+            if (response.ok) {
+              const latestProduct = await response.json();
+              return {
+                ...item,
+                currentStock: latestProduct.stock || latestProduct.quantity || 0
+              };
+            }
+          } catch (error) {
+            console.error("Error fetching stock for item:", error);
+          }
+          return { ...item, currentStock: item.stock || 0 };
+        })
+      );
+      setCartItemsWithStock(updatedCart);
+    };
+
+    if (cart.length > 0) {
+      fetchCartItemsStock();
+    } else {
+      setCartItemsWithStock([]);
+    }
+  }, [cart]);
+
   if (isCheckingAuth) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F5F0E1]">
@@ -51,9 +77,18 @@ export default function CartPage() {
   };
 
   const handleUpdateQuantity = async (id, qty) => {
-    const okay= await updateQuantity(id, qty);
+    // Get the product from cart to check stock
+    const cartItem = cartItemsWithStock.find(item => item.id === id);
+    
+    // Check if requested quantity exceeds available stock
+    if (cartItem && cartItem.currentStock !== undefined && qty > cartItem.currentStock) {
+      toast.error(`Only ${cartItem.currentStock} items available in stock`);
+      return;
+    }
+    
+    const okay = await updateQuantity(id, qty);
     if (okay){
-      toast.success("quantity updated")
+      toast.success("Quantity updated");
     }
   };
 
@@ -88,7 +123,7 @@ export default function CartPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           <div className="md:col-span-2 space-y-6">
-            {cart.map((item) => (
+            {cartItemsWithStock.map((item) => (
               <div
                 key={item.id}
                 className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-[#D2B48C] pb-4"
@@ -102,6 +137,20 @@ export default function CartPage() {
                   <div>
                     <h3 className="font-semibold text-[#7B4B3A] text-lg">{item.name}</h3>
                     <p className="text-[#5C362C] text-sm">{item.category}</p>
+                    
+                    {/* Stock Status Display */}
+                    <div className="mt-1">
+                      {item.currentStock <= 0 ? (
+                        <span className="text-red-600 text-sm font-medium">Out of Stock</span>
+                      ) : item.currentStock < 10 ? (
+                        <span className="text-orange-600 text-sm font-medium">
+                          Only {item.currentStock} left in stock
+                        </span>
+                      ) : (
+                        <span className="text-green-600 text-sm font-medium">In Stock</span>
+                      )}
+                    </div>
+                    
                     <p className="text-[#7B4B3A] font-semibold mt-1">
                       ₹{typeof item.price === "number" ? item.price.toFixed(2) : item.price}
                     </p>
@@ -111,14 +160,24 @@ export default function CartPage() {
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
-                    className="px-3 py-1 bg-[#D2B48C] text-[#7B4B3A] rounded hover:bg-[#C19A6B]"
+                    disabled={item.quantity <= 1}
+                    className={`px-3 py-1 rounded transition ${
+                      item.quantity <= 1 
+                        ? "bg-gray-300 cursor-not-allowed" 
+                        : "bg-[#D2B48C] text-[#7B4B3A] hover:bg-[#C19A6B]"
+                    }`}
                   >
                     −
                   </button>
                   <span className="font-semibold text-[#5C362C]">{item.quantity}</span>
                   <button
                     onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
-                    className="px-3 py-1 bg-[#D2B48C] text-[#7B4B3A] rounded hover:bg-[#C19A6B]"
+                    disabled={item.currentStock !== undefined && item.quantity >= item.currentStock}
+                    className={`px-3 py-1 rounded transition ${
+                      item.currentStock !== undefined && item.quantity >= item.currentStock
+                        ? "bg-gray-300 cursor-not-allowed" 
+                        : "bg-[#D2B48C] text-[#7B4B3A] hover:bg-[#C19A6B]"
+                    }`}
                   >
                     +
                   </button>
@@ -143,7 +202,7 @@ export default function CartPage() {
             </div>
             <div className="flex justify-between text-[#7B4B3A] text-lg font-bold border-t border-[#D2B48C] pt-3">
               <span>Total:</span>
-              <span>₹{(totalPrice ).toFixed(2)}</span>
+              <span>₹{(totalPrice).toFixed(2)}</span>
             </div>
 
             <button

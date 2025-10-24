@@ -9,13 +9,13 @@ function Checkout() {
   const location = useLocation();
   const { cart, clearCart, getTotalPrice } = useContext(CartContext);
   const { user, isLoggedIn, addOrder } = useContext(AuthContext);
-  
+
   const [cartItems, setCartItems] = useState([]);
   const [isImmediateCheckout, setIsImmediateCheckout] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [orderNumber, setOrderNumber] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -34,12 +34,40 @@ function Checkout() {
     setIsImmediateCheckout(immediateCheckout);
 
     let items = [];
+    
     if (immediateCheckout) {
-      const product = location.state?.product;
-      if (product) {
-        items = [{ ...product, quantity: location.state?.quantity || 1 }];
+      // ✅ FIXED: Check localStorage first for immediate checkout data
+      const userLoggedIn = localStorage.getItem("userLoggedIn");
+      if (userLoggedIn) {
+        const userData = JSON.parse(userLoggedIn);
+        const userId = userData.id;
+        const immediateCheckoutData = localStorage.getItem(`immediateCheckout_${userId}`);
+        
+        if (immediateCheckoutData) {
+          try {
+            items = JSON.parse(immediateCheckoutData);
+            console.log("Immediate checkout items from localStorage:", items);
+            
+            // Clear the immediate checkout data after reading
+            localStorage.removeItem(`immediateCheckout_${userId}`);
+          } catch (error) {
+            console.error("Error parsing immediate checkout data:", error);
+            // Fallback to location.state if localStorage fails
+            const product = location.state?.product;
+            if (product) {
+              items = [{ ...product, quantity: location.state?.quantity || 1 }];
+            }
+          }
+        } else {
+          // Fallback to location.state if no localStorage data
+          const product = location.state?.product;
+          if (product) {
+            items = [{ ...product, quantity: location.state?.quantity || 1 }];
+          }
+        }
       }
     } else {
+      // Normal cart checkout
       items = cart;
     }
 
@@ -58,8 +86,9 @@ function Checkout() {
     }
   }, [navigate, location, isLoggedIn, user, cart]);
 
+  // Generate a unique order number
   const generateOrderNumber = () => {
-    return `LIORA-₹{Date.now()}-₹{Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+    return `LIORA-${Date.now()}`;
   };
 
   const handleInputChange = (e) => {
@@ -69,23 +98,32 @@ function Checkout() {
     });
   };
 
+  const getSubtotal = () => {
+    if (isImmediateCheckout) {
+      return cartItems.reduce((total, item) => {
+        const price = typeof item.price === 'string' 
+          ? parseFloat(item.price.replace(/[^0-9.]/g, '')) 
+          : item.price;
+        return total + (price * (item.quantity || 1));
+      }, 0);
+    } else {
+      return getTotalPrice();
+    }
+  };
+
+  const handleBack = () => {
+    navigate(isImmediateCheckout ? -1 : "/cart");
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!isLoggedIn || !user) {
-      navigate("/login");
-      return;
-    }
-
-    if (isSubmitting) return;
+    if (!isLoggedIn || !user || isSubmitting) return;
 
     setIsSubmitting(true);
-
     try {
       const newOrderNumber = generateOrderNumber();
       setOrderNumber(newOrderNumber);
 
-      // Create order object
       const order = {
         id: newOrderNumber,
         items: cartItems.map(item => ({
@@ -106,24 +144,15 @@ function Checkout() {
         paymentStatus: "paid"
       };
 
-      // Add order to user's orders array
+      console.log("Submitting order:", order); // Debug log
+
       await addOrder(order);
+      if (!isImmediateCheckout) await clearCart();
 
-      // Only clear cart for regular checkout, not for immediate checkout
-      if (!isImmediateCheckout) {
-        await clearCart();
-      }
-
-      // Show success animation
       setShowSuccess(true);
-      
-      // Redirect after animation
+
       setTimeout(() => {
-        navigate("/order", { 
-          state: { 
-            recentOrder: newOrderNumber 
-          } 
-        });
+        navigate("/order", { state: { recentOrder: newOrderNumber } });
       }, 3000);
 
     } catch (error) {
@@ -134,103 +163,57 @@ function Checkout() {
     }
   };
 
-  const getSubtotal = () => {
-    if (isImmediateCheckout) {
-      return cartItems.reduce((total, item) => {
-        const price = typeof item.price === 'string' 
-          ? parseFloat(item.price.replace(/[^0-9.]/g, '')) 
-          : item.price;
-        return total + (price * (item.quantity || 1));
-      }, 0);
-    } else {
-      return getTotalPrice();
-    }
-  };
-
-  const handleBack = () => {
-    if (isImmediateCheckout) {
-      navigate(-1);
-    } else {
-      navigate("/cart");
-    }
-  };
-
-  // Success Animation Component
   const SuccessAnimation = () => (
-    <div className="fixed inset-0 backdrop-blur-sm  flex items-center justify-center z-50">
+    <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 text-center animate-scale-in">
         <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
           <FaCheck className="text-white text-3xl" />
         </div>
-        
         <h2 className="text-3xl font-bold text-[#8B5E3C] mb-4">Order Confirmed!</h2>
-        
         <div className="bg-[#FFF9F2] rounded-lg p-4 mb-6">
           <p className="text-[#6D4C41] mb-2">Order Number:</p>
           <p className="text-xl font-bold text-[#8B5E3C]">{orderNumber}</p>
         </div>
-
         <div className="flex items-center justify-center gap-3 text-green-600 mb-6">
           <FaBox className="animate-pulse" />
           <span className="font-semibold">Preparing your shipment</span>
         </div>
-
         <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
           <div className="bg-gradient-to-r from-[#8B5E3C] to-[#C19A6B] h-2 rounded-full animate-progress"></div>
         </div>
-
         <p className="text-[#6D4C41]">Redirecting to orders page...</p>
       </div>
     </div>
   );
 
-  if (showSuccess) {
-    return <SuccessAnimation />;
-  }
-
-  if (cartItems.length === 0 && !isImmediateCheckout) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-[#FFF9F2] to-[#F8F1E4] pt-32 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-2xl text-[#8B5E3C]">Your cart is empty</div>
-          <button
-            onClick={() => navigate("/shop")}
-            className="mt-4 px-6 py-2 bg-[#8B5E3C] text-white rounded-lg hover:bg-[#6D4C41] transition-colors"
-          >
-            Continue Shopping
-          </button>
-        </div>
+  if (showSuccess) return <SuccessAnimation />;
+  if (cartItems.length === 0 && !isImmediateCheckout) return (
+    <div className="min-h-screen bg-gradient-to-br from-[#FFF9F2] to-[#F8F1E4] pt-32 flex items-center justify-center">
+      <div className="text-center">
+        <div className="text-2xl text-[#8B5E3C]">Your cart is empty</div>
+        <button onClick={() => navigate("/shop")} className="mt-4 px-6 py-2 bg-[#8B5E3C] text-white rounded-lg hover:bg-[#6D4C41] transition-colors">
+          Continue Shopping
+        </button>
       </div>
-    );
-  }
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FFF9F2] to-[#F8F1E4] pt-32 pb-12 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <button
-            onClick={handleBack}
-            className="flex items-center gap-2 text-[#8B5E3C] hover:text-[#6D4C41] transition-colors mb-4"
-          >
-            <FaArrowLeft />
-            {isImmediateCheckout ? "Back to Product" : "Back to Cart"}
+          <button onClick={handleBack} className="flex items-center gap-2 text-[#8B5E3C] hover:text-[#6D4C41] transition-colors mb-4">
+            <FaArrowLeft /> {isImmediateCheckout ? "Back to Product" : "Back to Cart"}
           </button>
-          <h1 className="text-4xl font-bold text-[#8B5E3C] mb-2">
-            {isImmediateCheckout ? "Quick Checkout" : "Checkout"}
-          </h1>
-          <p className="text-[#6D4C41]">
-            {isImmediateCheckout 
-              ? "Complete your purchase for this item" 
-              : "Complete your purchase with confidence"
-            }
-          </p>
+          <h1 className="text-4xl font-bold text-[#8B5E3C] mb-2">{isImmediateCheckout ? "Quick Checkout" : "Checkout"}</h1>
+          <p className="text-[#6D4C41]">{isImmediateCheckout ? "Complete your purchase for this item" : "Complete your purchase with confidence"}</p>
         </div>
 
+        {/* Form + Order Summary */}
         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left Column - Forms */}
+          {/* Left Column - Shipping Info */}
           <div className="space-y-8">
-            {/* Shipping Information */}
             <div className="bg-white rounded-2xl shadow-lg p-6 border border-[#F0E6D8]">
               <div className="flex items-center gap-3 mb-6">
                 <div className="bg-gradient-to-br from-[#8B5E3C] to-[#C19A6B] p-2 rounded-full">
@@ -238,72 +221,16 @@ function Checkout() {
                 </div>
                 <h2 className="text-2xl font-bold text-[#8B5E3C]">Shipping Information</h2>
               </div>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-[#8B5E3C] mb-2">First Name *</label>
-                  <input
-                    type="text"
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-3 border border-[#E0CFC1] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#8B5E3C] bg-white text-[#6D4C41]"
-                    placeholder="John"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#8B5E3C] mb-2">Last Name *</label>
-                  <input
-                    type="text"
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-3 border border-[#E0CFC1] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#8B5E3C] bg-white text-[#6D4C41]"
-                    placeholder="Doe"
-                  />
-                </div>
+                <input type="text" name="firstName" value={formData.firstName} onChange={handleInputChange} required placeholder="First Name" className="w-full px-4 py-3 border rounded-xl" />
+                <input type="text" name="lastName" value={formData.lastName} onChange={handleInputChange} required placeholder="Last Name" className="w-full px-4 py-3 border rounded-xl" />
               </div>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <div>
-                  <label className="block text-sm font-medium text-[#8B5E3C] mb-2">Email *</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-3 border border-[#E0CFC1] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#8B5E3C] bg-white text-[#6D4C41]"
-                    placeholder="john@example.com"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#8B5E3C] mb-2">Phone *</label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-3 border border-[#E0CFC1] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#8B5E3C] bg-white text-[#6D4C41]"
-                    placeholder="+1 (555) 123-4567"
-                  />
-                </div>
+                <input type="email" name="email" value={formData.email} onChange={handleInputChange} required placeholder="Email" className="w-full px-4 py-3 border rounded-xl" />
+                <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} required placeholder="Phone" className="w-full px-4 py-3 border rounded-xl" />
               </div>
-
               <div className="mt-4">
-                <label className="block text-sm font-medium text-[#8B5E3C] mb-2">Address *</label>
-                <input
-                  type="text"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-4 py-3 border border-[#E0CFC1] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#8B5E3C] bg-white text-[#6D4C41]"
-                  placeholder="123 Main Street"
-                />
+                <input type="text" name="address" value={formData.address} onChange={handleInputChange} required placeholder="Address" className="w-full px-4 py-3 border rounded-xl" />
               </div>
             </div>
           </div>
@@ -315,56 +242,35 @@ function Checkout() {
                 <div className="bg-gradient-to-br from-[#8B5E3C] to-[#C19A6B] p-2 rounded-full">
                   <FaShoppingBag className="text-white text-sm" />
                 </div>
-                <h2 className="text-2xl font-bold text-[#8B5E3C]">
-                  {isImmediateCheckout ? "Quick Order" : "Order Summary"}
-                </h2>
+                <h2 className="text-2xl font-bold text-[#8B5E3C]">{isImmediateCheckout ? "Quick Order" : "Order Summary"}</h2>
               </div>
 
               {/* Cart Items */}
               <div className="space-y-4 mb-6 max-h-64 overflow-y-auto">
-                {cartItems.map((item) => (
+                {cartItems.map(item => (
                   <div key={item.id} className="flex items-center gap-3 p-3 bg-[#FFF9F2] rounded-lg">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-12 h-12 object-cover rounded"
-                    />
+                    <img src={item.image} alt={item.name} className="w-12 h-12 object-cover rounded" />
                     <div className="flex-1">
                       <h4 className="font-semibold text-[#8B5E3C] text-sm">{item.name}</h4>
                       <p className="text-[#6D4C41] text-sm">Qty: {item.quantity}</p>
                     </div>
-                    <div className="text-[#8B5E3C] font-semibold">
-                      ₹{(item.price * (item.quantity || 1)).toFixed(2)}
-                    </div>
+                    <div className="text-[#8B5E3C] font-semibold">₹{(item.price * (item.quantity || 1)).toFixed(2)}</div>
                   </div>
                 ))}
               </div>
 
-              {/* Order Totals */}
-              <div className="space-y-3 border-t border-[#E0CFC1] pt-4">
-                <div className="flex justify-between text-[#6D4C41]">
-                  <span>Subtotal</span>
-                  <span>₹{getSubtotal().toFixed(2)}</span>
-                </div>
+              <div className="space-y-3 border-t border-[#E0CFC1] pt-4 flex justify-between text-[#6D4C41]">
+                <span>Subtotal</span>
+                <span>₹{getSubtotal().toFixed(2)}</span>
               </div>
 
-              {/* Security Note */}
               <div className="flex items-center gap-2 mt-6 p-3 bg-green-50 rounded-lg border border-green-200">
                 <FaLock className="text-green-600" />
                 <span className="text-sm text-green-700">Your payment information is secure and encrypted</span>
               </div>
 
-              {/* Place Order Button */}
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className={`w-full bg-gradient-to-r from-[#8B5E3C] to-[#C19A6B] text-white py-4 rounded-xl font-semibold transition-all duration-300 mt-6 shadow-md ${
-                  isSubmitting 
-                    ? 'opacity-50 cursor-not-allowed' 
-                    : 'hover:shadow-lg transform hover:scale-105'
-                }`}
-              >
-               {isSubmitting ? 'Processing...' : `${isImmediateCheckout ? "Complete Purchase" : "Place Order"} - ₹${getSubtotal().toFixed(2)}`}
+              <button type="submit" disabled={isSubmitting} className={`w-full bg-gradient-to-r from-[#8B5E3C] to-[#C19A6B] text-white py-4 rounded-xl font-semibold mt-6 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lg transform hover:scale-105'}`}>
+                {isSubmitting ? "Processing..." : `${isImmediateCheckout ? "Complete Purchase" : "Place Order"} - ₹${getSubtotal().toFixed(2)}`}
               </button>
             </div>
           </div>
