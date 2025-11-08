@@ -1,0 +1,1735 @@
+{
+  "users": [
+    {
+      "id": "f676",
+      "firstName": "Sahla",
+      "lastName": "Sherin",
+      "email": "sahlasherin@gmail.com",
+      "password": "123455",
+      "role": "user",
+      "isAuthenticated": true,
+      "isActive": false,
+      "cart": [
+        {
+          "id": "3",
+          "name": "Diamond Ring",
+          "price": 2999,
+          "category": "Rings",
+          "image": "https://i.pinimg.com/1200x/e9/a0/bb/e9a0bbaceb5703d8bc876cfc10eabbae.jpg",
+          "rating": 5,
+          "description": "Sparkling diamond ring, a timeless piece for special moments.",
+          "reviews": [
+            "Dazzling ring!",
+            "Worth every penny.",
+            "Exquisite craftsmanship."
+          ],
+          "quantity": 1
+        }
+      ],
+      "wishlist": [
+        {
+          "id": "49",
+          "name": "Emerald Bangles",
+          "price": 190,
+          "category": "Bangles",
+          "image": "https://i.pinimg.com/1200x/bc/8e/b6/bc8eb68758d7ce6d293302d2d78b67b7.jpg",
+          "rating": 4,
+          "description": "Stunning emerald bangles perfect for festive occasions.",
+          "reviews": [
+            "Very pretty.",
+            "Nice green color.",
+            "Good quality."
+          ]
+        },
+        {
+          "id": "48",
+          "name": "Ruby Necklace",
+          "price": 329,
+          "category": "Necklaces",
+          "image": "https://i.pinimg.com/1200x/11/d5/ac/11d5acc1e66eb4f43a2acc3bafbde9fd.jpg",
+          "rating": 5,
+          "description": "Vibrant ruby necklace that makes a statement at parties.",
+          "reviews": [
+            "Beautiful color.",
+            "Elegant design.",
+            "Very happy with purchase."
+          ],
+          "addedAt": "2025-10-13T06:29:53.238Z"
+        },
+        {
+          "id": "27",
+          "name": "Luxury Diamond Watch",
+          "price": 1550,
+          "category": "Watches",
+          "image": "https://i.pinimg.com/1200x/72/b8/83/72b883f2263b7997168a775c1860cbde.jpg",
+          "rating": 5,
+          "description": "Luxury watch with diamond accents for a glamorous look.",
+          "reviews": [
+            "Absolutely stunning.",
+            "Feels premium.",
+            "Highly satisfied."
+          ]
+        }
+      ],
+      "shippingAddress": [],
+      "orders": [
+        {
+          "id": "LIORA-1760336063284-HXWF0DJ4D",
+          "items": [
+            {
+              "id": "46",
+              "name": "Luxury Nosepin Gold",
+              "price": 190,
+              "quantity": 1,
+              "image": "https://i.pinimg.com/736x/c6/07/b3/c607b3a21db795f1ca5b2c0c70341d49.jpg",
+              "category": "Nosepins"
+            }
+          ],
+          "total": 190,
+          "shippingInfo": {
+            "firstName": "Sahla",
+            "lastName": "Sherin",
+            "email": "sahlasherin@gmail.com",
+            "phone": "12345678",
+            "address": "123 main street"
+          },
+          "userId": "f676",
+          "userName": "Sahla Sherin",
+          "orderDate": "2025-10-13T06:14:23.284Z",
+          "status": "confirmed",
+          "estimatedDelivery": "2025-10-20T06:14:23.284Z",
+          "paymentStatus": "paid"
+        },
+        {
+          "id": "LIORA-1760330676835-8VG6YH6WQ",
+          "items": [
+            {
+              "id": "41",
+              "name": "Luxury Watch Gold",
+              "price": 799,
+              "quantity": 1,
+              "image": "https://i.pinimg.com/1200x/b9/48/93/b94893274ae20ba9ca069e02f68593a2.jpg",
+              "category": "Watches"
+            }
+          ],
+          "total": 799,
+          "shippingInfo": {
+            "firstName": "Sahla",
+            "lastName": "Sherin",
+            "email": "sahlasherin@gmail.com",
+            "phone": "9975103234",
+            "address": "asdfghjkhgf",
+            "city": "dfdg",
+            "zipCode": "123445",
+            "country": "United States"
+          },
+          "userId": "f676",
+          "userName": "Sahla Sherin",
+          "orderDate": "2025-10-13T04:44:36.835Z",
+          "status": "confirmed",
+          "estimatedDelivery": "2025-10-20T04:44:36.835Z",
+          "paymentStatus": "paid"
+        },
+        {
+          "id": "LIORA-1760328666780-NMI6NGG8I",
+          "items": [
+            {
+              "id": "50",
+              "name": "Golden Earrings Set",
+              "price": 210,
+              "quantity": 1,
+              "image": "https://i.pinimg.com/736x/ca/5f/11/ca5f1174584994d2dc30b43dc23b2543.jpg",
+              "category": "Earrings"
+            }
+          ],
+          "total": 210,
+          "shippingInfo": {
+            "firstName": "Sahla",
+            "lastName": "Sherin",
+            "email": "sahlasherin@gmail.com",
+            "phone": "12345678",
+            "address": "sxx",
+            "city": "sxxxx",
+            "zipCode": "123445",
+            "country": "United States"
+          },
+          "userId": "f676",
+          "userName": "Sahla Sherin",
+          "orderDate": "2025-10-13T04:11:06.780Z",
+          "status": "confirmed",
+          "estimatedDelivery": "2025-10-20T04:11:06.780Z",
+          "paymentStatus": "paid"
+        },
+        {
+          "id": "LIORA-1760328495406-8K2KR421Z",
+          "items": [
+            {
+              "id": "49",
+              "name": "Emerald Bangles",
+              "price": 160,
+              "quantity": 1,
+              "image": "https://i.pinimg.com/1200x/bc/8e/b6/bc8eb68758d7ce6d293302d2d78b67b7.jpg",
+              "category": "Bangles"
+            }
+          ],
+          "total": 160,
+          "shippingInfo": {
+            "firstName": "Sahla",
+            "lastName": "Sherin",
+            "email": "sahlasherin@gmail.com",
+            "phone": "12345678",
+            "address": "asdfghjkhgf",
+            "city": "sdf",
+            "zipCode": "123445",
+            "country": "United States"
+          },
+          "userId": "f676",
+          "userName": "Sahla Sherin",
+          "orderDate": "2025-10-13T04:08:15.406Z",
+          "status": "confirmed",
+          "estimatedDelivery": "2025-10-20T04:08:15.406Z",
+          "paymentStatus": "paid"
+        },
+        {
+          "id": "LIORA-1760328446682-ECUCMHALW",
+          "items": [
+            {
+              "id": "49",
+              "name": "Emerald Bangles",
+              "price": 160,
+              "quantity": 1,
+              "image": "https://i.pinimg.com/1200x/bc/8e/b6/bc8eb68758d7ce6d293302d2d78b67b7.jpg",
+              "category": "Bangles"
+            }
+          ],
+          "total": 160,
+          "shippingInfo": {
+            "firstName": "Sahla",
+            "lastName": "Sherin",
+            "email": "sahlasherin@gmail.com",
+            "phone": "12345678",
+            "address": "asdfghjk",
+            "city": "sxxxx",
+            "zipCode": "123445",
+            "country": "United States"
+          },
+          "userId": "f676",
+          "userName": "Sahla Sherin",
+          "orderDate": "2025-10-13T04:07:26.682Z",
+          "status": "confirmed",
+          "estimatedDelivery": "2025-10-20T04:07:26.682Z",
+          "paymentStatus": "paid"
+        },
+        {
+          "id": "LIORA-1760328241849-D7URFQLYT",
+          "items": [
+            {
+              "id": "49",
+              "name": "Emerald Bangles",
+              "price": 160,
+              "quantity": 1,
+              "image": "https://i.pinimg.com/1200x/bc/8e/b6/bc8eb68758d7ce6d293302d2d78b67b7.jpg",
+              "category": "Bangles"
+            }
+          ],
+          "total": 160,
+          "shippingInfo": {
+            "firstName": "Sahla",
+            "lastName": "Sherin",
+            "email": "sahlasherin@gmail.com",
+            "phone": "45678",
+            "address": "234sdfghygv",
+            "city": "sxxxx",
+            "zipCode": "123445",
+            "country": "United States"
+          },
+          "userId": "f676",
+          "userName": "Sahla Sherin",
+          "orderDate": "2025-10-13T04:04:01.849Z",
+          "status": "confirmed",
+          "estimatedDelivery": "2025-10-20T04:04:01.849Z",
+          "paymentStatus": "paid"
+        },
+        {
+          "id": "LIORA-1760327544300-217JRACJD",
+          "items": [
+            {
+              "id": "26",
+              "name": "Rose Gold Nosepin",
+              "price": 60,
+              "quantity": 1,
+              "image": "https://i.pinimg.com/736x/e0/84/73/e08473526a35c9fc3eb3f4b3b99ef837.jpg",
+              "category": "Nosepins"
+            }
+          ],
+          "total": 60,
+          "shippingInfo": {
+            "firstName": "Sahla",
+            "lastName": "Sherin",
+            "email": "sahlasherin@gmail.com",
+            "phone": "12345678",
+            "address": "asdfghjkhgf",
+            "city": "sxxxx",
+            "zipCode": "123445",
+            "country": "United States"
+          },
+          "userId": "f676",
+          "userName": "Sahla Sherin",
+          "orderDate": "2025-10-13T03:52:24.300Z",
+          "status": "confirmed",
+          "estimatedDelivery": "2025-10-20T03:52:24.337Z",
+          "paymentStatus": "paid"
+        },
+        {
+          "id": "LIORA-1760277705251-29WE1RXQ9",
+          "items": [
+            {
+              "id": "49",
+              "name": "Emerald Bangles",
+              "price": 160,
+              "quantity": 3,
+              "image": "https://i.pinimg.com/1200x/bc/8e/b6/bc8eb68758d7ce6d293302d2d78b67b7.jpg",
+              "category": "Bangles"
+            }
+          ],
+          "total": 480,
+          "shippingInfo": {
+            "firstName": "Sahla",
+            "lastName": "Sherin",
+            "email": "sahlasherin@gmail.com",
+            "phone": "9975103234",
+            "address": "123 main street",
+            "city": "sxxxx",
+            "zipCode": "123445",
+            "country": "United States"
+          },
+          "userId": "f676",
+          "userName": "Sahla Sherin",
+          "orderDate": "2025-10-12T14:01:45.259Z",
+          "status": "confirmed",
+          "estimatedDelivery": "2025-10-19T14:01:45.264Z",
+          "paymentStatus": "paid"
+        },
+        {
+          "id": "LIORA-1760181594806-V8VJTW6LA",
+          "items": [
+            {
+              "id": "40",
+              "name": "Diamond Nosepin Set",
+              "price": 70,
+              "quantity": 1,
+              "image": "https://i.pinimg.com/1200x/66/aa/a2/66aaa2757d85da62e5f1f2f4b8721dfe.jpg",
+              "category": "Nosepins"
+            }
+          ],
+          "total": 70,
+          "shippingInfo": {
+            "firstName": "Sahla",
+            "lastName": "Sherin",
+            "email": "sahlasherin@gmail.com",
+            "phone": "12345678",
+            "address": "123 main street",
+            "city": "dfdg",
+            "zipCode": "123445",
+            "country": "United States"
+          },
+          "userId": "f676",
+          "userName": "Sahla Sherin",
+          "orderDate": "2025-10-11T11:19:54.806Z",
+          "status": "confirmed",
+          "estimatedDelivery": "2025-10-18T11:19:54.806Z",
+          "paymentStatus": "paid"
+        },
+        {
+          "id": "LIORA-1760181256620-IDBD8N57B",
+          "items": [
+            {
+              "id": "50",
+              "name": "Golden Earrings Set",
+              "price": 210,
+              "quantity": 1,
+              "image": "https://i.pinimg.com/736x/ca/5f/11/ca5f1174584994d2dc30b43dc23b2543.jpg",
+              "category": "Earrings"
+            },
+            {
+              "id": "49",
+              "name": "Emerald Bangles",
+              "price": 160,
+              "quantity": 1,
+              "image": "https://i.pinimg.com/1200x/bc/8e/b6/bc8eb68758d7ce6d293302d2d78b67b7.jpg",
+              "category": "Bangles"
+            }
+          ],
+          "total": 370,
+          "shippingInfo": {
+            "firstName": "Sahla",
+            "lastName": "Sherin",
+            "email": "sahlasherin@gmail.com",
+            "phone": "12345678",
+            "address": "234sdfghygv",
+            "city": "sdf",
+            "zipCode": "123445",
+            "country": "United States"
+          },
+          "userId": "f676",
+          "userName": "Sahla Sherin",
+          "orderDate": "2025-10-11T11:14:16.621Z",
+          "status": "confirmed",
+          "estimatedDelivery": "2025-10-18T11:14:16.621Z",
+          "paymentStatus": "paid"
+        },
+        {
+          "id": "LIORA-1760181218718-GSS2962F3",
+          "items": [
+            {
+              "id": "44",
+              "name": "Rose Gold Bangles Set",
+              "price": 180,
+              "quantity": 1,
+              "image": "https://i.pinimg.com/736x/ef/30/a9/ef30a942fb09d8491cdadca91b9201c9.jpg",
+              "category": "Bangles"
+            }
+          ],
+          "total": 180,
+          "shippingInfo": {
+            "firstName": "Sahla",
+            "lastName": "Sherin",
+            "email": "sahlasherin@gmail.com",
+            "phone": "3456789",
+            "address": "asdfghjk",
+            "city": "sxxxx",
+            "zipCode": "123445",
+            "country": "United States"
+          },
+          "userId": "f676",
+          "userName": "Sahla Sherin",
+          "orderDate": "2025-10-11T11:13:38.718Z",
+          "status": "confirmed",
+          "estimatedDelivery": "2025-10-18T11:13:38.718Z",
+          "paymentStatus": "paid"
+        },
+        {
+          "id": "LIORA-1760180733433-H1DH68XPQ",
+          "items": [
+            {
+              "id": "50",
+              "name": "Golden Earrings Set",
+              "price": 210,
+              "quantity": 1,
+              "image": "https://i.pinimg.com/736x/ca/5f/11/ca5f1174584994d2dc30b43dc23b2543.jpg",
+              "category": "Earrings"
+            }
+          ],
+          "total": 210,
+          "shippingInfo": {
+            "firstName": "Sahla",
+            "lastName": "Sherin",
+            "email": "sahlasherin@gmail.com",
+            "phone": "12345678",
+            "address": "asdfghjkhgf",
+            "city": "dfdg",
+            "zipCode": "123445",
+            "country": "United States"
+          },
+          "userId": "f676",
+          "userName": "Sahla Sherin",
+          "orderDate": "2025-10-11T11:05:33.433Z",
+          "status": "confirmed",
+          "estimatedDelivery": "2025-10-18T11:05:33.433Z",
+          "paymentStatus": "paid"
+        },
+        {
+          "id": "LIORA-1760180676359-Z0MTSKPFY",
+          "items": [
+            {
+              "id": "49",
+              "name": "Emerald Bangles",
+              "price": 160,
+              "quantity": 1,
+              "image": "https://i.pinimg.com/1200x/bc/8e/b6/bc8eb68758d7ce6d293302d2d78b67b7.jpg",
+              "category": "Bangles"
+            }
+          ],
+          "total": 160,
+          "shippingInfo": {
+            "firstName": "Sahla",
+            "lastName": "Sherin",
+            "email": "sahlasherin@gmail.com",
+            "phone": "12345678",
+            "address": "123 main street",
+            "city": "sdf",
+            "zipCode": "123445",
+            "country": "United States"
+          },
+          "userId": "f676",
+          "userName": "Sahla Sherin",
+          "orderDate": "2025-10-11T11:04:36.359Z",
+          "status": "confirmed",
+          "estimatedDelivery": "2025-10-18T11:04:36.359Z",
+          "paymentStatus": "paid"
+        }
+      ]
+    },
+    {
+      "id": "kplja1ow",
+      "firstName": "Saniya",
+      "lastName": "K",
+      "email": "saniya@gmail.com",
+      "password": "123456",
+      "role": "user",
+      "isAuthenticated": true,
+      "isActive": true,
+      "cart": [
+        {
+          "id": "50",
+          "name": "Golden Earrings Set",
+          "price": 269,
+          "category": "Earrings",
+          "image": "https://i.pinimg.com/736x/ca/5f/11/ca5f1174584994d2dc30b43dc23b2543.jpg",
+          "rating": 5,
+          "description": "Elegant golden earrings set that complements any outfit.",
+          "reviews": [
+            "Looks premium.",
+            "Very stylish.",
+            "Perfect for parties."
+          ],
+          "stock": 21,
+          "quantity": 1
+        },
+        {
+          "id": "46",
+          "name": "Luxury Nosepin Gold",
+          "price": 190,
+          "category": "Nosepins",
+          "image": "https://i.pinimg.com/736x/c6/07/b3/c607b3a21db795f1ca5b2c0c70341d49.jpg",
+          "rating": 5,
+          "description": "Elegant gold nosepin perfect for festive occasions.",
+          "reviews": [
+            "Looks premium.",
+            "Nice design.",
+            "Very comfortable."
+          ],
+          "stock": 31,
+          "quantity": 1
+        }
+      ],
+      "wishlist": [],
+      "shippingAddress": [],
+      "orders": [
+        {
+          "id": "LIORA-1761147450168",
+          "items": [
+            {
+              "id": "27",
+              "name": "Luxury Diamond Watch",
+              "price": 1550,
+              "quantity": 5,
+              "image": "https://i.pinimg.com/1200x/72/b8/83/72b883f2263b7997168a775c1860cbde.jpg",
+              "category": "Watches"
+            }
+          ],
+          "total": 7750,
+          "shippingInfo": {
+            "firstName": "Saniya",
+            "lastName": "K",
+            "email": "saniyak@gmail.com",
+            "phone": "9975103234",
+            "address": "123 main street"
+          },
+          "userId": "kplja1ow",
+          "userName": "Saniya K",
+          "orderDate": "2025-10-22T15:37:30.168Z",
+          "status": "confirmed",
+          "estimatedDelivery": "2025-10-29T15:37:30.168Z",
+          "paymentStatus": "paid"
+        },
+        {
+          "id": "LIORA-1761146226394",
+          "items": [
+            {
+              "id": "47",
+              "name": "Diamond Watch Silver",
+              "price": 1580,
+              "quantity": 3,
+              "image": "https://i.pinimg.com/736x/ff/9f/47/ff9f47e230e0f9ac1f68be70d30d365f.jpg",
+              "category": "Watches"
+            }
+          ],
+          "total": 4740,
+          "shippingInfo": {
+            "firstName": "Saniya",
+            "lastName": "K",
+            "email": "saniyak@gmail.com",
+            "phone": "9975103234",
+            "address": "123 main street"
+          },
+          "userId": "kplja1ow",
+          "userName": "Saniya K",
+          "orderDate": "2025-10-22T15:17:06.394Z",
+          "status": "pending",
+          "estimatedDelivery": "2025-10-29T15:17:06.394Z",
+          "paymentStatus": "paid"
+        },
+        {
+          "id": "LIORA-1761143777884",
+          "items": [
+            {
+              "id": "27",
+              "name": "Luxury Diamond Watch",
+              "price": 1550,
+              "quantity": 5,
+              "image": "https://i.pinimg.com/1200x/72/b8/83/72b883f2263b7997168a775c1860cbde.jpg",
+              "category": "Watches"
+            }
+          ],
+          "total": 7750,
+          "shippingInfo": {
+            "firstName": "Saniya",
+            "lastName": "K",
+            "email": "saniyak@gmail.com",
+            "phone": "9975103234",
+            "address": "123 main street"
+          },
+          "userId": "kplja1ow",
+          "userName": "Saniya K",
+          "orderDate": "2025-10-22T14:36:17.884Z",
+          "status": "confirmed",
+          "estimatedDelivery": "2025-10-29T14:36:17.885Z",
+          "paymentStatus": "paid"
+        },
+        {
+          "id": "LIORA-1760779036504",
+          "items": [
+            {
+              "id": "49",
+              "name": "Emerald Bangles",
+              "price": 190,
+              "quantity": 1,
+              "image": "https://i.pinimg.com/1200x/bc/8e/b6/bc8eb68758d7ce6d293302d2d78b67b7.jpg",
+              "category": "Bangles"
+            }
+          ],
+          "total": 190,
+          "shippingInfo": {
+            "firstName": "Saniya",
+            "lastName": "K",
+            "email": "saniyak@gmail.com",
+            "phone": "9975103234",
+            "address": "123 main street"
+          },
+          "userId": "kplja1owe",
+          "userName": "Saniya K",
+          "orderDate": "2025-10-18T09:17:16.504Z",
+          "status": "delivered",
+          "estimatedDelivery": "2025-10-25T09:17:16.504Z",
+          "paymentStatus": "paid"
+        },
+        {
+          "id": "LIORA-1760591849987",
+          "items": [
+            {
+              "id": "49",
+              "name": "Emerald Bangles",
+              "price": 190,
+              "quantity": 1,
+              "image": "https://i.pinimg.com/1200x/bc/8e/b6/bc8eb68758d7ce6d293302d2d78b67b7.jpg",
+              "category": "Bangles"
+            }
+          ],
+          "total": 190,
+          "shippingInfo": {
+            "firstName": "Saniya",
+            "lastName": "K",
+            "email": "saniyak@gmail.com",
+            "phone": "9975103234",
+            "address": "cvbn"
+          },
+          "userId": "kplja1owe",
+          "userName": "Saniya K",
+          "orderDate": "2025-10-16T05:17:29.987Z",
+          "status": "shipping",
+          "estimatedDelivery": "2025-10-23T05:17:29.987Z",
+          "paymentStatus": "paid"
+        },
+        {
+          "id": "LIORA-1760591785443",
+          "items": [
+            {
+              "id": "3",
+              "name": "Diamond Ring",
+              "price": 2999,
+              "quantity": 1,
+              "image": "https://i.pinimg.com/1200x/e9/a0/bb/e9a0bbaceb5703d8bc876cfc10eabbae.jpg",
+              "category": "Rings"
+            },
+            {
+              "id": "49",
+              "name": "Emerald Bangles",
+              "price": 190,
+              "quantity": 1,
+              "image": "https://i.pinimg.com/1200x/bc/8e/b6/bc8eb68758d7ce6d293302d2d78b67b7.jpg",
+              "category": "Bangles"
+            }
+          ],
+          "total": 3189,
+          "shippingInfo": {
+            "firstName": "Saniya",
+            "lastName": "K",
+            "email": "saniyak@gmail.com",
+            "phone": "9975103234",
+            "address": "fghfdsdfg"
+          },
+          "userId": "kplja1owe",
+          "userName": "Saniya K",
+          "orderDate": "2025-10-16T05:16:25.443Z",
+          "status": "confirmed",
+          "estimatedDelivery": "2025-10-23T05:16:25.443Z",
+          "paymentStatus": "paid"
+        }
+      ],
+      "tempCart": [
+        {
+          "id": "27",
+          "name": "Luxury Diamond Watch",
+          "price": 1550,
+          "category": "Watches",
+          "image": "https://i.pinimg.com/1200x/72/b8/83/72b883f2263b7997168a775c1860cbde.jpg",
+          "rating": 5,
+          "description": "Luxury watch with diamond accents for a glamorous look.",
+          "reviews": [
+            "Absolutely stunning.",
+            "Feels premium.",
+            "Highly satisfied."
+          ],
+          "stock": 5,
+          "quantity": 5,
+          "total": 7750
+        }
+      ]
+    },
+    {
+      "id": "teilb0sp2",
+      "firstName": "vafa",
+      "lastName": "pk",
+      "email": "vafa@gmail.com",
+      "password": "123455",
+      "role": "admin",
+      "isAuthenticated": true,
+      "cart": [],
+      "wishlist": [
+        {
+          "id": "4",
+          "name": "Luxury Bracelet",
+          "price": 899,
+          "category": "Bangles",
+          "image": "https://i.pinimg.com/1200x/fc/f1/3a/fcf13ab134500a1026585263367c7c1f.jpg",
+          "rating": 4,
+          "description": "Luxury bracelet with intricate detailing and modern design.",
+          "reviews": [
+            "Very stylish.",
+            "Elegant for parties.",
+            "Good quality."
+          ],
+          "addedAt": "2025-10-16T08:53:36.466Z"
+        }
+      ],
+      "shippingAddress": [],
+      "orders": [
+        {
+          "id": "LIORA-1760592735435",
+          "items": [
+            {
+              "id": "48",
+              "name": "Ruby Necklace",
+              "price": 329,
+              "quantity": 1,
+              "image": "https://i.pinimg.com/1200x/11/d5/ac/11d5acc1e66eb4f43a2acc3bafbde9fd.jpg",
+              "category": "Necklaces"
+            }
+          ],
+          "total": 329,
+          "shippingInfo": {
+            "firstName": "vafa",
+            "lastName": "pk",
+            "email": "vafa@gmail.com",
+            "phone": "9975103234",
+            "address": "123 main street"
+          },
+          "userId": "teilb0sp2",
+          "userName": "vafa pk",
+          "orderDate": "2025-10-16T05:32:15.435Z",
+          "status": "confirmed",
+          "estimatedDelivery": "2025-10-23T05:32:15.435Z",
+          "paymentStatus": "paid"
+        }
+      ]
+    },
+    {
+      "id": "nrnx7zi9g",
+      "firstName": "rinsha",
+      "lastName": "k",
+      "email": "rinsha@gmail.com",
+      "password": "asdfgh",
+      "role": "user",
+      "isAuthenticated": true,
+      "isActive": true,
+      "cart": [
+        {
+          "id": "4",
+          "name": "Luxury Bracelet",
+          "price": 899,
+          "category": "Bangles",
+          "image": "https://i.pinimg.com/1200x/fc/f1/3a/fcf13ab134500a1026585263367c7c1f.jpg",
+          "rating": 4,
+          "description": "Luxury bracelet with intricate detailing and modern design.",
+          "reviews": [
+            "Very stylish.",
+            "Elegant for parties.",
+            "Good quality."
+          ],
+          "stock": 12,
+          "quantity": 3
+        }
+      ],
+      "wishlist": [],
+      "shippingAddress": [],
+      "orders": [
+        {
+          "id": "LIORA-1761149206496",
+          "items": [
+            {
+              "id": "40",
+              "name": "Diamond Nosepin Set",
+              "price": 3870,
+              "quantity": 3,
+              "image": "https://i.pinimg.com/1200x/66/aa/a2/66aaa2757d85da62e5f1f2f4b8721dfe.jpg",
+              "category": "Nosepins"
+            }
+          ],
+          "total": 11610,
+          "shippingInfo": {
+            "firstName": "rinsha",
+            "lastName": "k",
+            "email": "rinsha@gmail.com",
+            "phone": "9975103234",
+            "address": "cvbn"
+          },
+          "userId": "nrnx7zi9g",
+          "userName": "rinsha k",
+          "orderDate": "2025-10-22T16:06:46.496Z",
+          "status": "confirmed",
+          "estimatedDelivery": "2025-10-29T16:06:46.497Z",
+          "paymentStatus": "paid"
+        },
+        {
+          "id": "LIORA-1761114865672",
+          "items": [
+            {
+              "id": "49",
+              "name": "Emerald Bangles",
+              "price": 190,
+              "quantity": 1,
+              "image": "https://i.pinimg.com/1200x/bc/8e/b6/bc8eb68758d7ce6d293302d2d78b67b7.jpg",
+              "category": "Bangles"
+            }
+          ],
+          "total": 190,
+          "shippingInfo": {
+            "firstName": "rinsha",
+            "lastName": "k",
+            "email": "rinsha@gmail.com",
+            "phone": "8566998855",
+            "address": "jhgfdsgfd"
+          },
+          "userId": "nrnx7zi9g",
+          "userName": "rinsha k",
+          "orderDate": "2025-10-22T06:34:25.672Z",
+          "status": "shipping",
+          "estimatedDelivery": "2025-10-29T06:34:25.672Z",
+          "paymentStatus": "paid"
+        },
+        {
+          "id": "LIORA-1761114806575",
+          "items": [
+            {
+              "id": "1761113781399",
+              "name": "dfg",
+              "price": 23,
+              "quantity": 1,
+              "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1z3WO2y5h7YkHljxIsvwuOxP21OE_8tnedA&s",
+              "category": "hjkl;"
+            }
+          ],
+          "total": 23,
+          "shippingInfo": {
+            "firstName": "rinsha",
+            "lastName": "k",
+            "email": "rinsha@gmail.com",
+            "phone": "44454",
+            "address": "54"
+          },
+          "userId": "nrnx7zi9g",
+          "userName": "rinsha k",
+          "orderDate": "2025-10-22T06:33:26.575Z",
+          "status": "shipping",
+          "estimatedDelivery": "2025-10-29T06:33:26.575Z",
+          "paymentStatus": "paid"
+        }
+      ],
+      "tempCart": [
+        {
+          "id": "40",
+          "name": "Diamond Nosepin Set",
+          "price": 3870,
+          "category": "Nosepins",
+          "image": "https://i.pinimg.com/1200x/66/aa/a2/66aaa2757d85da62e5f1f2f4b8721dfe.jpg",
+          "rating": 5,
+          "description": "Delicate diamond nosepin set that adds sparkle to your look.",
+          "reviews": [
+            "Looks premium.",
+            "Very pretty.",
+            "Perfect size."
+          ],
+          "stock": 4,
+          "quantity": 3,
+          "total": 11610
+        }
+      ]
+    },
+    {
+      "id": "m1au0hovr",
+      "firstName": "midhun",
+      "lastName": "t",
+      "email": "midhun@gmail.com",
+      "password": "555555",
+      "role": "user",
+      "isAuthenticated": true,
+      "cart": [
+        {
+          "id": "50",
+          "name": "Golden Earrings Set",
+          "price": 269,
+          "category": "Earrings",
+          "image": "https://i.pinimg.com/736x/ca/5f/11/ca5f1174584994d2dc30b43dc23b2543.jpg",
+          "rating": 5,
+          "description": "Elegant golden earrings set that complements any outfit.",
+          "reviews": [
+            "Looks premium.",
+            "Very stylish.",
+            "Perfect for parties."
+          ],
+          "stock": 21,
+          "quantity": 1
+        }
+      ],
+      "wishlist": [],
+      "shippingAddress": [],
+      "orders": []
+    },
+    {
+      "id": "1b1ecacxl",
+      "firstName": "yadu",
+      "lastName": "k",
+      "email": "ykr@gmail.com",
+      "password": "123456",
+      "role": "user",
+      "isAuthenticated": true,
+      "cart": [
+        {
+          "id": "1761206685919",
+          "name": "hair pin",
+          "price": 234,
+          "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1z3WO2y5h7YkHljxIsvwuOxP21OE_8tnedA&s",
+          "category": "hair accessory",
+          "description": "good",
+          "stock": 12,
+          "quantity": 3
+        },
+        {
+          "id": "50",
+          "name": "Golden Earrings Set",
+          "price": 269,
+          "category": "Earrings",
+          "image": "https://i.pinimg.com/736x/ca/5f/11/ca5f1174584994d2dc30b43dc23b2543.jpg",
+          "rating": 5,
+          "description": "Elegant golden earrings set that complements any outfit.",
+          "reviews": [
+            "Looks premium.",
+            "Very stylish.",
+            "Perfect for parties."
+          ],
+          "stock": 21,
+          "quantity": 5
+        }
+      ],
+      "wishlist": [
+        {
+          "id": "1761206685919",
+          "name": "hair pin",
+          "price": 234,
+          "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1z3WO2y5h7YkHljxIsvwuOxP21OE_8tnedA&s",
+          "category": "hair accessory",
+          "description": "good",
+          "stock": 12
+        }
+      ],
+      "shippingAddress": [],
+      "orders": []
+    }
+  ],
+  "products": [
+    {
+      "id": "2",
+      "name": "Pearl Necklace",
+      "price": 259,
+      "category": "Necklaces",
+      "image": "https://i.pinimg.com/736x/5f/da/54/5fda547c66f85840a1e2069cd90b1ebb.jpg",
+      "rating": 5,
+      "description": "Elegant pearl necklace, perfect for formal occasions.",
+      "reviews": [
+        "Absolutely stunning!",
+        "Quality pearls.",
+        "Received many compliments."
+      ],
+      "stock": 15
+    },
+    {
+      "id": "3",
+      "name": "Diamond Ring",
+      "price": 2999,
+      "category": "Rings",
+      "image": "https://i.pinimg.com/1200x/e9/a0/bb/e9a0bbaceb5703d8bc876cfc10eabbae.jpg",
+      "rating": 5,
+      "description": "Sparkling diamond ring, a timeless piece for special moments.",
+      "reviews": [
+        "Dazzling ring!",
+        "Worth every penny.",
+        "Exquisite craftsmanship."
+      ],
+      "stock": 8
+    },
+    {
+      "id": "4",
+      "name": "Luxury Bracelet",
+      "price": 899,
+      "category": "Bangles",
+      "image": "https://i.pinimg.com/1200x/fc/f1/3a/fcf13ab134500a1026585263367c7c1f.jpg",
+      "rating": 4,
+      "description": "Luxury bracelet with intricate detailing and modern design.",
+      "reviews": [
+        "Very stylish.",
+        "Elegant for parties.",
+        "Good quality."
+      ],
+      "stock": 12
+    },
+    {
+      "id": "5",
+      "name": "Elegant Choker",
+      "price": 399,
+      "category": "Necklaces",
+      "image": "https://i.pinimg.com/1200x/be/5e/c8/be5ec83b2203458020fe82d867fa2e43.jpg",
+      "rating": 4,
+      "description": "Choker necklace with elegant design for evening wear.",
+      "reviews": [
+        "Looks gorgeous!",
+        "Elegant piece.",
+        "Perfect fit."
+      ],
+      "stock": 18
+    },
+    {
+      "id": "6",
+      "name": "Rose Gold Earrings",
+      "price": 280,
+      "category": "Earrings",
+      "image": "https://i.pinimg.com/736x/fa/3d/33/fa3d3351a26341579caad8dc5eeb9b51.jpg",
+      "rating": 4,
+      "description": "Stylish rose gold earrings for modern fashion lovers.",
+      "reviews": [
+        "Love the color!",
+        "Chic and elegant.",
+        "Nice finish."
+      ],
+      "stock": 22
+    },
+    {
+      "id": "7",
+      "name": "Silver Bracelet",
+      "price": 200,
+      "category": "Bangles",
+      "image": "https://i.pinimg.com/736x/3d/4a/a7/3d4aa77e4924a757dd2a9fea831bdaf3.jpg",
+      "rating": 3,
+      "description": "Simple silver bracelet suitable for everyday wear.",
+      "reviews": [
+        "Good for casual wear.",
+        "Nice but lightweight.",
+        "Simple design."
+      ],
+      "stock": 25
+    },
+    {
+      "id": "8",
+      "name": "Luxury Pendant Necklace",
+      "price": 399,
+      "category": "Necklaces",
+      "image": "https://i.pinimg.com/1200x/e3/e7/ce/e3e7ce29f84a1de717a503317e515fa2.jpg",
+      "rating": 5,
+      "description": "Pendant necklace with luxurious appeal and exquisite detailing.",
+      "reviews": [
+        "Looks expensive!",
+        "Elegant pendant.",
+        "Very classy."
+      ],
+      "stock": 10
+    },
+    {
+      "id": "9",
+      "name": "Emerald Earrings",
+      "price": 259,
+      "category": "Earrings",
+      "image": "https://i.pinimg.com/736x/de/66/1d/de661d0856e20774536cf5a09009ed67.jpg",
+      "rating": 4,
+      "description": "Stunning emerald earrings with a touch of sophistication.",
+      "reviews": [
+        "Beautiful stones.",
+        "Shiny and classy.",
+        "Loved it!"
+      ],
+      "stock": 14
+    },
+    {
+      "id": "10",
+      "name": "Sapphire Necklace",
+      "price": 380,
+      "category": "Necklaces",
+      "image": "https://i.pinimg.com/736x/8a/28/28/8a2828df5a5bfe8cf53d5a2ca17c72d1.jpg",
+      "rating": 5,
+      "description": "Gorgeous sapphire necklace for a luxurious look.",
+      "reviews": [
+        "Elegant and sparkly.",
+        "Perfect gift.",
+        "High quality."
+      ],
+      "stock": 7
+    },
+    {
+      "id": "11",
+      "name": "Gold Ring",
+      "price": 220,
+      "category": "Rings",
+      "image": "https://i.pinimg.com/736x/31/67/43/316743767dc39a1271a684aaba958ca8.jpg",
+      "rating": 4,
+      "description": "Elegant gold ring with a classic design for any occasion.",
+      "reviews": [
+        "Beautiful ring.",
+        "Fits perfectly.",
+        "High-quality gold."
+      ],
+      "stock": 20
+    },
+    {
+      "id": "12",
+      "name": "Nosepin Set",
+      "price": 389,
+      "category": "Nosepins",
+      "image": "https://i.pinimg.com/736x/c0/ee/9b/c0ee9b021bc30e874a73408ad69310ce.jpg",
+      "rating": 5,
+      "description": "Delicate diamond nosepin adding sparkle and elegance.",
+      "reviews": [
+        "Lovely nosepin.",
+        "Shiny and cute.",
+        "Perfect for daily wear."
+      ],
+      "stock": 30
+    },
+    {
+      "id": "13",
+      "name": "Anklet with Pearls",
+      "price": 189,
+      "category": "Anklets",
+      "image": "https://i.pinimg.com/1200x/e5/b3/7a/e5b37ac686e6672cfa0042aad081eadd.jpg",
+      "rating": 4,
+      "description": "Charming anklet adorned with pearls for a feminine touch.",
+      "reviews": [
+        "Pretty anklet.",
+        "Looks elegant.",
+        "Comfortable to wear."
+      ],
+      "stock": 16
+    },
+    {
+      "id": "14",
+      "name": "Luxury Watch",
+      "price": 789,
+      "category": "Watches",
+      "image": "https://i.pinimg.com/736x/a6/13/f7/a613f73509d4a95e11758f34d8bee8cc.jpg",
+      "rating": 5,
+      "description": "Stylish luxury watch combining elegance and precision.",
+      "reviews": [
+        "Very classy.",
+        "Excellent build.",
+        "Love the design."
+      ],
+      "stock": 9
+    },
+    {
+      "id": "15",
+      "name": "Rose Gold Bangles",
+      "price": 220,
+      "category": "Bangles",
+      "image": "https://i.pinimg.com/1200x/3f/c3/4a/3fc34a18a8c5aa96248051f30a13ac75.jpg",
+      "rating": 4,
+      "description": "Rose gold bangles with a sleek finish for modern fashion.",
+      "reviews": [
+        "Elegant look.",
+        "Good quality.",
+        "Comfortable to wear."
+      ],
+      "stock": 18
+    },
+    {
+      "id": "16",
+      "name": "Gold Anklet",
+      "price": 290,
+      "category": "Anklets",
+      "image": "https://i.pinimg.com/1200x/2f/6e/cc/2f6ecc4c6a1d7cc45a7490972ca993e3.jpg",
+      "rating": 4,
+      "description": "Classic gold anklet, perfect for traditional outfits.",
+      "reviews": [
+        "Beautiful anklet.",
+        "Nice shine.",
+        "Comfortable."
+      ],
+      "stock": 21
+    },
+    {
+      "id": "17",
+      "name": "Diamond Earrings",
+      "price": 1889,
+      "category": "Earrings",
+      "image": "https://i.pinimg.com/1200x/e7/e8/29/e7e829fd12fd69877a1f772366fe55ca.jpg",
+      "rating": 5,
+      "description": "Stunning diamond earrings that enhance any look.",
+      "reviews": [
+        "Sparkling diamonds!",
+        "Exquisite design.",
+        "Worth the price."
+      ],
+      "stock": 6
+    },
+    {
+      "id": "18",
+      "name": "Pearl Nosepin",
+      "price": 450,
+      "category": "Nosepins",
+      "image": "https://i.pinimg.com/1200x/23/78/75/23787520fdaece41d3169e3d4b4b2780.jpg",
+      "rating": 4,
+      "description": "Delicate pearl nosepin perfect for subtle elegance.",
+      "reviews": [
+        "Cute design.",
+        "Very pretty.",
+        "Perfect gift."
+      ],
+      "stock": 28
+    },
+    {
+      "id": "19",
+      "name": "Luxury Gold Watch",
+      "price": 550,
+      "category": "Watches",
+      "image": "https://i.pinimg.com/736x/e5/ff/5b/e5ff5b41b87cff3d0ec3cf1231867547.jpg",
+      "rating": 5,
+      "description": "Luxury gold watch with sleek design and premium quality.",
+      "reviews": [
+        "Looks expensive!",
+        "Perfect size.",
+        "Excellent finish."
+      ],
+      "stock": 11
+    },
+    {
+      "id": "20",
+      "name": "Silver Necklace",
+      "price": 200,
+      "category": "Necklaces",
+      "image": "https://i.pinimg.com/736x/42/bd/fc/42bdfc2a21aad46c3bcfe78f08188126.jpg",
+      "rating": 4,
+      "description": "Elegant silver necklace for both casual and formal occasions.",
+      "reviews": [
+        "Beautiful necklace.",
+        "Good craftsmanship.",
+        "Comfortable to wear."
+      ],
+      "stock": 19
+    },
+    {
+      "id": "21",
+      "name": "Platinum Ring",
+      "price": 420,
+      "category": "Rings",
+      "image": "https://i.pinimg.com/736x/ba/e5/37/bae5377d2e7a7a14f6ab622f2bd02f9c.jpg",
+      "rating": 5,
+      "description": "Premium platinum ring with a sleek, timeless design.",
+      "reviews": [
+        "Excellent quality.",
+        "Very elegant.",
+        "Highly recommend."
+      ],
+      "stock": 13
+    },
+    {
+      "id": "22",
+      "name": "Pakistani Earrings",
+      "price": 379,
+      "category": "Earrings",
+      "image": "https://i.pinimg.com/736x/72/c1/7c/72c17c119047d4a085bd6eb06e323e78.jpg",
+      "rating": 4,
+      "description": "Traditional Pakistani earrings with intricate design.",
+      "reviews": [
+        "Beautiful craftsmanship.",
+        "Looks authentic.",
+        "Perfect for weddings."
+      ],
+      "stock": 17
+    },
+    {
+      "id": "23",
+      "name": "Golden Choker",
+      "price": 630,
+      "category": "Necklaces",
+      "image": "https://i.pinimg.com/1200x/37/04/29/370429e71a2adfaf462d2c14b858480c.jpg",
+      "rating": 5,
+      "description": "Stylish golden choker that adds elegance to any outfit.",
+      "reviews": [
+        "Gorgeous design.",
+        "Fits perfectly.",
+        "Very classy."
+      ],
+      "stock": 8
+    },
+    {
+      "id": "24",
+      "name": "Silver Bangles",
+      "price": 280,
+      "category": "Bangles",
+      "image": "https://i.pinimg.com/736x/7d/13/fd/7d13fdeead23b99a8816480d20dd53bd.jpg",
+      "rating": 4,
+      "description": "Simple yet elegant silver bangles for everyday wear.",
+      "reviews": [
+        "Looks stylish.",
+        "Good quality.",
+        "Comfortable on wrist."
+      ],
+      "stock": 24
+    },
+    {
+      "id": "25",
+      "name": "Pearl Anklet",
+      "price": 370,
+      "category": "Anklets",
+      "image": "https://i.pinimg.com/1200x/4b/09/a9/4b09a9809c0dd892e88589260d3d83e4.jpg",
+      "rating": 4,
+      "description": "Delicate pearl anklet adding charm to your steps.",
+      "reviews": [
+        "Very pretty.",
+        "Nice finish.",
+        "Lightweight and comfortable."
+      ],
+      "stock": 15
+    },
+    {
+      "id": "26",
+      "name": "Rose Gold Nosepin",
+      "price": 199,
+      "category": "Nosepins",
+      "image": "https://i.pinimg.com/736x/e0/84/73/e08473526a35c9fc3eb3f4b3b99ef837.jpg",
+      "rating": 5,
+      "description": "Elegant rose gold nosepin with a subtle sparkle.",
+      "reviews": [
+        "Perfect size.",
+        "Beautiful color.",
+        "Good craftsmanship."
+      ],
+      "stock": 32
+    },
+    {
+      "id": "27",
+      "name": "Luxury Diamond Watch",
+      "price": 1550,
+      "category": "Watches",
+      "image": "https://i.pinimg.com/1200x/72/b8/83/72b883f2263b7997168a775c1860cbde.jpg",
+      "rating": 5,
+      "description": "Luxury watch with diamond accents for a glamorous look.",
+      "reviews": [
+        "Absolutely stunning.",
+        "Feels premium.",
+        "Highly satisfied."
+      ],
+      "stock": 5
+    },
+    {
+      "id": "28",
+      "name": "Emerald Ring",
+      "price": 399,
+      "category": "Rings",
+      "image": "https://i.pinimg.com/736x/d6/b9/b2/d6b9b28b4b9e678a0e9826c69d28a080.jpg",
+      "rating": 4,
+      "description": "Exquisite emerald ring that makes a bold statement.",
+      "reviews": [
+        "Gorgeous stone.",
+        "Very elegant.",
+        "Quality is great."
+      ],
+      "stock": 11
+    },
+    {
+      "id": "29",
+      "name": "Gold Earrings",
+      "price": 220,
+      "category": "Earrings",
+      "image": "https://i.pinimg.com/1200x/d1/82/c8/d182c869453af15f6d239dd1426e889e.jpg",
+      "rating": 5,
+      "description": "Classic gold earrings suitable for any occasion.",
+      "reviews": [
+        "Beautiful shine.",
+        "Elegant design.",
+        "Love them!"
+      ],
+      "stock": 26
+    },
+    {
+      "id": "30",
+      "name": "Pearl Necklace Set",
+      "price": 390,
+      "category": "Necklaces",
+      "image": "https://i.pinimg.com/736x/96/fd/01/96fd013bf8bb1f36ded49b0d990422b6.jpg",
+      "rating": 5,
+      "description": "Graceful pearl necklace set for a sophisticated look.",
+      "reviews": [
+        "Looks premium.",
+        "Perfect set.",
+        "Very elegant."
+      ],
+      "stock": 9
+    },
+    {
+      "id": "31",
+      "name": "Silver Anklet",
+      "price": 280,
+      "category": "Anklets",
+      "image": "https://i.pinimg.com/1200x/74/6c/a0/746ca0746ffd519ed430dc1265f97f36.jpg",
+      "rating": 4,
+      "description": "Delicate silver anklet perfect for casual and festive wear.",
+      "reviews": [
+        "Lightweight and pretty.",
+        "Nice shine.",
+        "Very comfortable."
+      ],
+      "stock": 20
+    },
+    {
+      "id": "32",
+      "name": "Diamond Bangles",
+      "price": 899,
+      "category": "Bangles",
+      "image": "https://i.pinimg.com/1200x/03/c8/c6/03c8c6562f6be8bbaff2eaa0b8f96da7.jpg",
+      "rating": 5,
+      "description": "Luxury diamond-studded bangles for special occasions.",
+      "reviews": [
+        "Sparkles beautifully.",
+        "Looks premium.",
+        "Excellent design."
+      ],
+      "stock": 7
+    },
+    {
+      "id": "33",
+      "name": "Golden Watch",
+      "price": 680,
+      "category": "Watches",
+      "image": "https://i.pinimg.com/1200x/46/28/4a/46284aac3f6dace3b233366e2511a6a8.jpg",
+      "rating": 5,
+      "description": "Elegant golden watch with a luxurious finish.",
+      "reviews": [
+        "Very classy.",
+        "Premium feel.",
+        "Highly recommend."
+      ],
+      "stock": 10
+    },
+    {
+      "id": "34",
+      "name": "Silver Nosepin",
+      "price": 109,
+      "category": "Nosepins",
+      "image": "https://i.pinimg.com/736x/5c/d8/9b/5cd89b92852faa2432c84f7bc397b90e.jpg",
+      "rating": 4,
+      "description": "Simple silver nosepin with a delicate design.",
+      "reviews": [
+        "Perfect size.",
+        "Nice finish.",
+        "Very cute."
+      ],
+      "stock": 35
+    },
+    {
+      "id": "35",
+      "name": "Ruby Ring",
+      "price": 689,
+      "category": "Rings",
+      "image": "https://i.pinimg.com/1200x/22/91/41/2291411745da3c0a6811b93148782bf6.jpg",
+      "rating": 5,
+      "description": "Stunning ruby ring with vibrant red gemstone.",
+      "reviews": [
+        "Beautiful stone.",
+        "Fits perfectly.",
+        "Very elegant."
+      ],
+      "stock": 8
+    },
+    {
+      "id": "36",
+      "name": "Platinum Necklace",
+      "price": 400,
+      "category": "Necklaces",
+      "image": "https://i.pinimg.com/1200x/87/0c/f1/870cf1e0fd7034f0614d825f9b8426c4.jpg",
+      "rating": 5,
+      "description": "Premium platinum necklace with a modern design.",
+      "reviews": [
+        "Looks premium.",
+        "Very classy.",
+        "Highly recommend."
+      ],
+      "stock": 12
+    },
+    {
+      "id": "37",
+      "name": "Bangle",
+      "price": 250,
+      "category": "Bangles",
+      "image": "https://i.pinimg.com/1200x/4d/7c/1c/4d7c1c7b1811806725d9c672d80dfc65.jpg",
+      "rating": 4,
+      "description": "Classic bangle that complements both casual and formal attire.",
+      "reviews": [
+        "Good quality.",
+        "Fits well.",
+        "Elegant design."
+      ],
+      "stock": 22
+    },
+    {
+      "id": "38",
+      "name": "Pearl Earrings",
+      "price": 199,
+      "category": "Earrings",
+      "image": "https://i.pinimg.com/1200x/17/35/9a/17359ac49a62790b79c03a25fec91e72.jpg",
+      "rating": 4,
+      "description": "Elegant pearl earrings perfect for any occasion.",
+      "reviews": [
+        "Pretty design.",
+        "Lightweight.",
+        "Looks classy."
+      ],
+      "stock": 18
+    },
+    {
+      "id": "39",
+      "name": "Gold Anklet Set",
+      "price": 295,
+      "category": "Anklets",
+      "image": "https://i.pinimg.com/736x/96/6b/58/966b58e240a3c0ed5ddacaebe9f7ca00.jpg",
+      "rating": 4,
+      "description": "Beautiful gold anklet set for festive or casual wear.",
+      "reviews": [
+        "Very cute.",
+        "Looks elegant.",
+        "Good value."
+      ],
+      "stock": 14
+    },
+    {
+      "id": "40",
+      "name": "Diamond Nosepin Set",
+      "price": 3870,
+      "category": "Nosepins",
+      "image": "https://i.pinimg.com/1200x/66/aa/a2/66aaa2757d85da62e5f1f2f4b8721dfe.jpg",
+      "rating": 5,
+      "description": "Delicate diamond nosepin set that adds sparkle to your look.",
+      "reviews": [
+        "Looks premium.",
+        "Very pretty.",
+        "Perfect size."
+      ],
+      "stock": 4
+    },
+    {
+      "id": "41",
+      "name": "Luxury Watch Gold",
+      "price": 799,
+      "category": "Watches",
+      "image": "https://i.pinimg.com/1200x/b9/48/93/b94893274ae20ba9ca069e02f68593a2.jpg",
+      "rating": 5,
+      "description": "High-end gold watch with a sophisticated design.",
+      "reviews": [
+        "Absolutely stunning.",
+        "Feels very premium.",
+        "Worth every penny."
+      ],
+      "stock": 8
+    },
+    {
+      "id": "42",
+      "name": "Silver Ring",
+      "price": 200,
+      "category": "Rings",
+      "image": "https://i.pinimg.com/736x/c7/fc/a0/c7fca0e63d713ac61af14dc074c0422e.jpg",
+      "rating": 4,
+      "description": "Elegant silver ring for everyday wear or special occasions.",
+      "reviews": [
+        "Good quality.",
+        "Simple yet classy.",
+        "Fits perfectly."
+      ],
+      "stock": 23
+    },
+    {
+      "id": "43",
+      "name": "Gold Necklace Set",
+      "price": 450,
+      "category": "Necklaces",
+      "image": "https://i.pinimg.com/736x/a4/48/2e/a4482e3614ff3a2e3264e3d3a5d62ea4.jpg",
+      "rating": 5,
+      "description": "Luxurious gold necklace set ideal for weddings and parties.",
+      "reviews": [
+        "Beautiful craftsmanship.",
+        "Looks premium.",
+        "Highly recommend."
+      ],
+      "stock": 6
+    },
+    {
+      "id": "44",
+      "name": "Rose Gold Bangles Set",
+      "price": 225,
+      "category": "Bangles",
+      "image": "https://i.pinimg.com/736x/ef/30/a9/ef30a942fb09d8491cdadca91b9201c9.jpg",
+      "rating": 4,
+      "description": "Stylish rose gold bangles that add elegance to any outfit.",
+      "reviews": [
+        "Very trendy.",
+        "Nice shine.",
+        "Fits well."
+      ],
+      "stock": 19
+    },
+    {
+      "id": "45",
+      "name": "Pearl Anklet Set",
+      "price": 99,
+      "category": "Anklets",
+      "image": "https://i.pinimg.com/736x/31/d7/a1/31d7a11ec5502350167eea3684b5ce59.jpg",
+      "rating": 4,
+      "description": "Delicate pearl anklet set for a subtle, classy look.",
+      "reviews": [
+        "Very pretty.",
+        "Lightweight.",
+        "Good for daily wear."
+      ],
+      "stock": 27
+    },
+    {
+      "id": "46",
+      "name": "Luxury Nosepin Gold",
+      "price": 190,
+      "category": "Nosepins",
+      "image": "https://i.pinimg.com/736x/c6/07/b3/c607b3a21db795f1ca5b2c0c70341d49.jpg",
+      "rating": 5,
+      "description": "Elegant gold nosepin perfect for festive occasions.",
+      "reviews": [
+        "Looks premium.",
+        "Nice design.",
+        "Very comfortable."
+      ],
+      "stock": 31
+    },
+    {
+      "id": "47",
+      "name": "Diamond Watch Silver",
+      "price": 1580,
+      "category": "Watches",
+      "image": "https://i.pinimg.com/736x/ff/9f/47/ff9f47e230e0f9ac1f68be70d30d365f.jpg",
+      "rating": 5,
+      "description": "Luxury silver watch adorned with sparkling diamonds.",
+      "reviews": [
+        "Absolutely gorgeous.",
+        "Premium feel.",
+        "Perfect gift."
+      ],
+      "stock": 3
+    },
+    {
+      "id": "48",
+      "name": "Ruby Necklace",
+      "price": 329,
+      "category": "Necklaces",
+      "image": "https://i.pinimg.com/1200x/11/d5/ac/11d5acc1e66eb4f43a2acc3bafbde9fd.jpg",
+      "rating": 5,
+      "description": "Vibrant ruby necklace that makes a statement at parties.",
+      "reviews": [
+        "Beautiful color.",
+        "Elegant design.",
+        "Very happy with purchase."
+      ],
+      "stock": 9
+    },
+    {
+      "id": "49",
+      "name": "Emerald Bangles",
+      "price": 190,
+      "category": "Bangles",
+      "image": "https://i.pinimg.com/1200x/bc/8e/b6/bc8eb68758d7ce6d293302d2d78b67b7.jpg",
+      "rating": 4,
+      "description": "Stunning emerald bangles perfect for festive occasions.",
+      "reviews": [
+        "Very pretty.",
+        "Nice green color.",
+        "Good quality."
+      ],
+      "stock": 16
+    },
+    {
+      "id": "50",
+      "name": "Golden Earrings Set",
+      "price": 269,
+      "category": "Earrings",
+      "image": "https://i.pinimg.com/736x/ca/5f/11/ca5f1174584994d2dc30b43dc23b2543.jpg",
+      "rating": 5,
+      "description": "Elegant golden earrings set that complements any outfit.",
+      "reviews": [
+        "Looks premium.",
+        "Very stylish.",
+        "Perfect for parties."
+      ],
+      "stock": 21
+    },
+    {
+      "id": "1761206685919",
+      "name": "hair pin",
+      "price": 234,
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1z3WO2y5h7YkHljxIsvwuOxP21OE_8tnedA&s",
+      "category": "hair accessory",
+      "description": "good",
+      "stock": 12
+    },
+    {
+      "id": "1761208605208",
+      "name": "hair ",
+      "price": 456,
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1z3WO2y5h7YkHljxIsvwuOxP21OE_8tnedA&s",
+      "category": "hair accessory",
+      "description": "dfgh",
+      "stock": 6
+    }
+  ]
+}

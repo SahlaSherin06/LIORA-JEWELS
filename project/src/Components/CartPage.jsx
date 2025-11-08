@@ -214,6 +214,9 @@ export default function CartPage() {
           </div>
         </div>
       </div>
+      {/* {items.map((n)=>(
+        <li key={n.id}>{n.name}</li>
+      ))} */}
     </div>
   );
 }
