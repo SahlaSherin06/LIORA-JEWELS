@@ -904,24 +904,7 @@
       "password": "555555",
       "role": "user",
       "isAuthenticated": true,
-      "cart": [
-        {
-          "id": "50",
-          "name": "Golden Earrings Set",
-          "price": 269,
-          "category": "Earrings",
-          "image": "https://i.pinimg.com/736x/ca/5f/11/ca5f1174584994d2dc30b43dc23b2543.jpg",
-          "rating": 5,
-          "description": "Elegant golden earrings set that complements any outfit.",
-          "reviews": [
-            "Looks premium.",
-            "Very stylish.",
-            "Perfect for parties."
-          ],
-          "stock": 21,
-          "quantity": 1
-        }
-      ],
+      "cart": [],
       "wishlist": [],
       "shippingAddress": [],
       "orders": []
