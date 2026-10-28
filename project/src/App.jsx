@@ -44,6 +44,11 @@ function App() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   //  Auto redirect admin after refresh
   useEffect(() => {
     const storedUser = localStorage.getItem("userLoggedIn");

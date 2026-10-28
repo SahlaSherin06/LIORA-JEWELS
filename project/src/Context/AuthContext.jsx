@@ -1,165 +1,103 @@
 import { createContext, useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import api from "../api/api";
 
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState([]);
 
-  // Load logged-in user and orders from localStorage
+  // On initial load, just verify with the backend using the secure cookie
   useEffect(() => {
-    const storedUser = localStorage.getItem("userLoggedIn");
-    if (storedUser) {
-      const userData = JSON.parse(storedUser);
-      verifyUserStatus(userData.id); 
-    }
+    verifyUserStatus();
   }, []);
 
-  // Save orders to localStorage whenever orders change
-  useEffect(() => {
-    if (user && orders.length > 0) {
-      localStorage.setItem(`orders_${user.id}`, JSON.stringify(orders));
-    }
-  }, [orders, user]);
-
-  // ✅ Verify user status when loading from localStorage
-  const verifyUserStatus = async (userId) => {
+  const verifyUserStatus = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/users/${userId}`);
-      if (!res.ok) throw new Error("Failed to verify user");
-      const dbUser = await res.json();
+      // The interceptor automatically attaches the token
+      const res = await api.get("/auth/profile");
+      const dbUser = res.data;
 
       if (dbUser.isActive === false) {
-        // alert("Your account has been deactivated by admin.");
-        toast.warning("user deactivated")
+        toast.warning("Your account has been deactivated.");
         logout();
         return;
       }
 
-      setUser(dbUser);
-      loadUserDataFromDB(dbUser.id);
+      setUser({
+        id: dbUser._id,
+        firstName: dbUser.firstName,
+        lastName: dbUser.lastName,
+        email: dbUser.email,
+        phone: dbUser.phone,
+        address: dbUser.address,
+        role: dbUser.role
+      });
 
-      // Load orders from localStorage
-      const storedOrders = localStorage.getItem(`orders_${dbUser.id}`);
-      if (storedOrders) {
-        setOrders(JSON.parse(storedOrders));
-      }
+      // Dispatch event to load cart and wishlist
+      window.dispatchEvent(new Event("userStatusVerified"));
+      
+      // Fetch orders
+      fetchOrders();
     } catch (error) {
       console.error("Error verifying user:", error);
       logout();
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Function to load user-specific data from db.json
-  const loadUserDataFromDB = async (userId) => {
+  const fetchOrders = async () => {
     try {
-      const response = await fetch("http://localhost:5000/users");
-      if (!response.ok) throw new Error("Failed to fetch users");
-      const users = await response.json();
-
-      const currentUser = users.find((u) => u.id === userId);
-      if (currentUser) {
-        if (currentUser.cart)
-          localStorage.setItem(`cart_${userId}`, JSON.stringify(currentUser.cart));
-        if (currentUser.wishlist)
-          localStorage.setItem(`wishlist_${userId}`, JSON.stringify(currentUser.wishlist));
-        if (currentUser.orders && currentUser.orders.length > 0) {
-          setOrders(currentUser.orders);
-          localStorage.setItem(`orders_${userId}`, JSON.stringify(currentUser.orders));
-        }
-
-        window.dispatchEvent(new Event("cartUpdated"));
-        window.dispatchEvent(new Event("wishlistUpdated"));
-      }
+      const res = await api.get("/orders");
+      setOrders(res.data);
     } catch (error) {
-      console.error("Error loading user data:", error);
+      console.error("Error fetching orders:", error);
     }
   };
 
-  // ✅ LOGIN — includes isActive check
-  const login = async (userData) => {
+  // Called from LoginPage after getting the token
+  const login = (userData) => {
+    setUser(userData);
+    toast.success("Login successful");
+    window.dispatchEvent(new Event("userStatusVerified"));
+    fetchOrders();
+  };
+
+  const logout = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/users/${userData.id}`);
-      if (!response.ok) throw new Error("Failed to verify user");
-
-      const dbUser = await response.json();
-
-      if (dbUser.isActive === false) {
-        // alert("Your account has been deactivated. Please contact the admin.");
-        toast.warning("user deactivated")
-        return;
-      }
-
-      setUser(dbUser);
-      localStorage.setItem("userLoggedIn", JSON.stringify(dbUser));
-      clearPreviousUserData();
-      loadUserDataFromDB(dbUser.id);
-
-      const storedOrders = localStorage.getItem(`orders_${dbUser.id}`);
-      setOrders(storedOrders ? JSON.parse(storedOrders) : []);
-      toast.success("login successfull")
+      await api.post("/auth/logout"); // Tell backend to clear the cookie
     } catch (error) {
-      console.error("Error during login:", error);
-      alert("Unable to login. Please try again later.");
+      console.error("Logout error", error);
     }
-  };
-
-  const logout = () => {
-    if (user) clearPreviousUserData();
     setUser(null);
     setOrders([]);
+    // Clear any leftover legacy localStorage items just in case
     localStorage.removeItem("userLoggedIn");
-    window.dispatchEvent(new Event("cartUpdated"));
-    window.dispatchEvent(new Event("wishlistUpdated"));
+    localStorage.removeItem("token");
+    toast.info("Logged out successfully");
+    window.dispatchEvent(new Event("userLoggedOut"));
   };
 
-  const addOrder = async (order) => {
+  const updateUser = (updatedData) => {
+    setUser(prev => ({ ...prev, ...updatedData }));
+  };
+
+  // Place a new order
+  const addOrder = async (orderData) => {
     if (!user) return console.error("No user logged in");
 
     try {
-      const updatedOrders = [order, ...orders];
-      setOrders(updatedOrders);
-      localStorage.setItem(`orders_${user.id}`, JSON.stringify(updatedOrders));
-      await saveOrderToDB(order);
+      const res = await api.post("/orders", orderData);
+      setOrders([res.data, ...orders]);
+      toast.success("Order placed successfully!");
     } catch (error) {
       console.error("Error adding order:", error);
+      toast.error(error.response?.data?.message || "Failed to place order.");
+      throw error;
     }
-  };
-
-  const saveOrderToDB = async (order) => {
-    try {
-      const response = await fetch("http://localhost:5000/users");
-      if (!response.ok) throw new Error("Failed to fetch users");
-
-      const users = await response.json();
-      const currentUser = users.find((u) => u.id === user.id);
-
-      if (currentUser) {
-        const updatedUser = {
-          ...currentUser,
-          orders: [order, ...(currentUser.orders || [])],
-        };
-
-        const updateRes = await fetch(`http://localhost:5000/users/${user.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updatedUser),
-        });
-
-        if (!updateRes.ok) throw new Error("Failed to update user orders");
-      }
-    } catch (error) {
-      console.error("Error saving order to DB:", error);
-    }
-  };
-
-  const clearPreviousUserData = () => {
-    Object.keys(localStorage).forEach((key) => {
-      if (key.startsWith("cart_") || key.startsWith("wishlist_") || key.startsWith("orders_")) {
-        localStorage.removeItem(key);
-      }
-    });
   };
 
   const isLoggedIn = !!user;
@@ -168,8 +106,10 @@ export function AuthProvider({ children }) {
     <AuthContext.Provider
       value={{
         user,
+        loading,
         login,
         logout,
+        updateUser,
         isLoggedIn,
         orders,
         addOrder,

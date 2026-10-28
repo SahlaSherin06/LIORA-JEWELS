@@ -5,7 +5,6 @@ import { FaSearch, FaEye, FaBars, FaArrowLeft, FaArrowRight, FaShoppingCart, FaC
 const OrderHistory = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [orders, setOrders] = useState([]);
-  const [filteredOrders, setFilteredOrders] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [isMobile, setIsMobile] = useState(false);
@@ -26,52 +25,36 @@ const OrderHistory = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Fetch orders
+  // Fetch orders from backend
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const usersRes = await fetch("http://localhost:5000/users");
-        const usersData = await usersRes.json();
-        
-        // Extract all orders from all users
-        const allOrders = usersData.flatMap(user => 
-          (user.orders || []).map(order => ({
-            ...order,
-            customerName: user.firstName,
-            customerEmail: user.email,
-            userId: user.id,
-            date: new Date(order.date || order.orderDate)
-          }))
-        );
+        const res = await fetch(`http://localhost:5000/api/admin/orders?search=${searchTerm}`, { credentials: "include" });
+        if (!res.ok) throw new Error("Failed to fetch orders");
+        const allOrders = await res.json();
 
-        // Sort by date (newest first)
-        allOrders.sort((a, b) => b.date - a.date);
+        // Format dates
+        const formattedOrders = allOrders.map(order => ({
+          ...order,
+          date: new Date(order.createdAt || order.date)
+        }));
         
-        setOrders(allOrders);
-        setFilteredOrders(allOrders);
+        setOrders(formattedOrders);
+        setCurrentPage(1);
       } catch (err) {
         console.error("Error fetching orders:", err);
       }
     };
-    fetchOrders();
-  }, []);
-
-  // Filter orders based on search
-  useEffect(() => {
-    const filtered = orders.filter(order =>
-      order.customerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.status?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredOrders(filtered);
-    setCurrentPage(1);
-  }, [searchTerm, orders]);
+    
+    const timeoutId = setTimeout(() => fetchOrders(), 400); // Debounce search
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm]);
 
   // Pagination calculations
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
-  const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
-  const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
+  const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
+  const totalPages = Math.ceil(orders.length / ordersPerPage);
 
   // Order status colors - Updated with new status options
   const getStatusColor = (status) => {
@@ -113,53 +96,22 @@ const OrderHistory = () => {
   // Update order status
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
-      // Find the user who owns this order
-      const usersRes = await fetch("http://localhost:5000/users");
-      const usersData = await usersRes.json();
-      
-      let targetUser = null;
-      let targetOrderIndex = -1;
+      const res = await fetch(`http://localhost:5000/api/admin/orders/${orderId}/status`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ status: newStatus }),
+      });
 
-      // Find the user and order index
-      for (const user of usersData) {
-        const orderIndex = (user.orders || []).findIndex(order => order.id === orderId);
-        if (orderIndex !== -1) {
-          targetUser = user;
-          targetOrderIndex = orderIndex;
-          break;
-        }
-      }
-
-      if (targetUser && targetOrderIndex !== -1) {
-        // Update the order status
-        const updatedOrders = [...targetUser.orders];
-        updatedOrders[targetOrderIndex] = {
-          ...updatedOrders[targetOrderIndex],
-          status: newStatus
-        };
-
-        // Update the user with the modified orders
-        const updatedUser = {
-          ...targetUser,
-          orders: updatedOrders
-        };
-
-        const res = await fetch(`http://localhost:5000/users/${targetUser.id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updatedUser),
-        });
-
-        if (res.ok) {
-          // Update local state
-          setOrders(prev => 
-            prev.map(order => 
-              order.id === orderId ? { ...order, status: newStatus } : order
-            )
-          );
-        }
+      if (res.ok) {
+        // Update local state
+        setOrders(prev => 
+          prev.map(order => 
+            order._id === orderId || order.id === orderId ? { ...order, status: newStatus } : order
+          )
+        );
       }
     } catch (err) {
       console.error("Error updating order status:", err);
@@ -283,7 +235,7 @@ const OrderHistory = () => {
           {/* Orders Table */}
           <div className="bg-white rounded-xl shadow-lg border border-[#7B4B3A]/30 overflow-hidden w-full">
             <div className="px-4 py-3 font-semibold text-lg bg-[#7B4B3A] text-[#F5F0E1]">
-              All Orders ({filteredOrders.length})
+              All Orders ({orders.length})
             </div>
             
             {currentOrders.length === 0 ? (
@@ -328,15 +280,14 @@ const OrderHistory = () => {
                             <div className="flex items-center">
                               <FaShoppingCart className="text-gray-400 mr-2 flex-shrink-0" />
                               <span className="text-sm font-medium text-gray-900 truncate max-w-[100px]">
-                                {order.id || `ORD-${order.userId}-${Math.random().toString(36).substr(2, 9)}`}
+                                {order._id || order.id}
                               </span>
                             </div>
                           </td>
                           {!isMobile && (
                             <td className="px-3 py-4 whitespace-nowrap">
                               <div className="min-w-0">
-                                <p className="font-medium text-gray-900 text-sm truncate">{order.customerName}</p>
-                                <p className="text-xs text-gray-500 truncate">{order.customerEmail}</p>
+                                <p className="font-medium text-gray-900 text-sm truncate">{order.userName}</p>
                               </div>
                             </td>
                           )}
@@ -349,7 +300,7 @@ const OrderHistory = () => {
                           <td className="px-3 py-4 whitespace-nowrap">
                             <select
                               value={order.status || 'pending'}
-                              onChange={(e) => updateOrderStatus(order.id, e.target.value)}
+                              onChange={(e) => updateOrderStatus(order._id || order.id, e.target.value)}
                               className={`px-2 py-1 text-xs font-semibold rounded-full border-0 focus:ring-2 focus:ring-[#7B4B3A] ${getStatusColor(order.status)}`}
                             >
                               <option value="pending" className="bg-white text-gray-800">Pending</option>
@@ -378,7 +329,7 @@ const OrderHistory = () => {
                 {totalPages > 1 && (
                   <div className="px-3 sm:px-4 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
                     <div className="text-xs sm:text-sm text-gray-700">
-                      Showing {indexOfFirstOrder + 1} to {Math.min(indexOfLastOrder, filteredOrders.length)} of {filteredOrders.length} orders
+                      Showing {indexOfFirstOrder + 1} to {Math.min(indexOfLastOrder, orders.length)} of {orders.length} orders
                     </div>
                     <div className="flex gap-1 sm:gap-2">
                       <button
@@ -438,7 +389,7 @@ const OrderHistory = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div>
                   <h3 className="font-semibold text-[#5C362C] mb-2">Order Information</h3>
-                  <p><strong>Order ID:</strong> {selectedOrder.id || 'N/A'}</p>
+                  <p><strong>Order ID:</strong> {selectedOrder._id || selectedOrder.id}</p>
                   <p><strong>Date:</strong> {formatDate(selectedOrder.date)}</p>
                   <p><strong>Status:</strong> 
                     <span className={`ml-2 px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(selectedOrder.status)}`}>
@@ -448,18 +399,24 @@ const OrderHistory = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-[#5C362C] mb-2">Customer Information</h3>
-                  <p><strong>Name:</strong> {selectedOrder.customerName}</p>
-                  <p><strong>Email:</strong> {selectedOrder.customerEmail}</p>
+                  <p><strong>Name:</strong> {selectedOrder.userName}</p>
+                  {selectedOrder.shippingInfo && (
+                    <>
+                      <p><strong>Email:</strong> {selectedOrder.shippingInfo.email}</p>
+                      <p><strong>Phone:</strong> {selectedOrder.shippingInfo.phone}</p>
+                      <p><strong>Address:</strong> {selectedOrder.shippingInfo.address}</p>
+                    </>
+                  )}
                 </div>
               </div>
 
               {/* Order Items */}
               <div className="mb-6">
                 <h3 className="font-semibold text-[#5C362C] mb-3">Order Items</h3>
-                <div className="border rounded-lg overflow-hidden">
+                <div className="border border-[#7B4B3A]/30 rounded-lg overflow-hidden">
                   <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-[#bd826c]">
+                    <table className="min-w-full divide-y divide-[#7B4B3A]/20">
+                      <thead className="bg-[#EDE4D3]">
                         <tr>
                           <th className="px-4 py-2 text-left text-xs font-semibold text-[#5C362C]">Product</th>
                           <th className="px-4 py-2 text-left text-xs font-semibold text-[#5C362C]">Price</th>
@@ -467,9 +424,9 @@ const OrderHistory = () => {
                           <th className="px-4 py-2 text-left text-xs font-semibold text-[#5C362C]">Total</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-gray-200">
+                      <tbody className="divide-y divide-[#7B4B3A]/20 bg-[#F5F0E1]">
                         {(selectedOrder.items || []).map((item, index) => (
-                          <tr key={index}>
+                          <tr key={index} className="hover:bg-[#EDE4D3]/50 transition-colors">
                             <td className="px-4 py-2 text-sm">{item.name}</td>
                             <td className="px-4 py-2 text-sm">₹{item.price}</td>
                             <td className="px-4 py-2 text-sm">{item.quantity}</td>
@@ -483,14 +440,14 @@ const OrderHistory = () => {
               </div>
 
               {/* Order Summary */}
-              <div className="bg-[#bd826c] rounded-lg p-4">
+              <div className="bg-[#EDE4D3] border border-[#B88A6F] rounded-lg p-4 text-[#5C362C]">
                 <div className="flex justify-between items-center mb-2">
                   <span className="font-semibold">Subtotal:</span>
                   <span>₹{(selectedOrder.total || 0).toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between items-center border-t border-[#bd826c]  pt-2">
-                  <span className="font-bold text-lg">Total:</span>
-                  <span className="font-bold text-lg">₹{(selectedOrder.total || 0).toLocaleString()}</span>
+                <div className="flex justify-between items-center border-t border-[#B88A6F] pt-2">
+                  <span className="font-bold text-lg text-[#7B4B3A]">Total:</span>
+                  <span className="font-bold text-lg text-[#7B4B3A]">₹{(selectedOrder.total || 0).toLocaleString()}</span>
                 </div>
               </div>
             </div>

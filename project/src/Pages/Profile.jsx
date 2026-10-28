@@ -1,326 +1,251 @@
-// src/Pages/Profile.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
+import { AuthContext } from "../Context/AuthContext";
+import { CartContext } from "../Context/CartContext";
+import { WishlistContext } from "../Context/WishlistContext";
+import api from "../api/api";
+import { FaUserCircle, FaShoppingBag, FaHeart, FaShoppingCart, FaSignOutAlt, FaSave } from "react-icons/fa";
 
 function Profile() {
   const navigate = useNavigate();
-  const [user, setUser] = useState({
+  const { user, logout, updateUser, loading: authLoading } = useContext(AuthContext);
+  const { getCartCount } = useContext(CartContext);
+  const { wishlist } = useContext(WishlistContext);
+  
+  const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     phone: "",
     address: ""
   });
-  const [stats, setStats] = useState({
-    orders: 0,
-    wishlistItems: 0,
-    cartItems: 0
-  });
-  const [isLoading, setIsLoading] = useState(true);
+  
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    const loadUserData = async () => {
-      // Check if user is logged in
-      const userLoggedIn = localStorage.getItem("userLoggedIn");
-      if (!userLoggedIn) {
-        navigate("/login");
-        return;
-      }
-
-      try {
-        const userData = JSON.parse(userLoggedIn);
-        
-        // Try to load user data from API first
-        const response = await fetch(`http://localhost:5000/users/${userData.id}`);
-        if (response.ok) {
-          const apiUserData = await response.json();
-          setUser({
-            firstName: apiUserData.firstName || "",
-            lastName: apiUserData.lastName || "",
-            email: apiUserData.email || "",
-            phone: apiUserData.phone || "",
-            address: apiUserData.address || ""
-          });
-        } else {
-          // Fallback to localStorage data
-          const storedUserData = localStorage.getItem(`userProfile_${userData.id}`);
-          if (storedUserData) {
-            setUser(JSON.parse(storedUserData));
-          } else {
-            // Use basic user data from login
-            setUser(prev => ({
-              ...prev,
-              firstName: userData.firstName || "",
-              lastName: userData.lastName || "",
-              email: userData.email || ""
-            }));
-          }
-        }
-
-        // Load user stats
-        loadUserStats(userData.id);
-      } catch (error) {
-        console.error("Error loading user data:", error);
-        toast.error("Error loading profile data");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadUserData();
-  }, [navigate]);
-
-  const loadUserStats = (userId) => {
-    try {
-      // Load cart count
-      const userCart = JSON.parse(localStorage.getItem(`cart_${userId}`) || '[]');
-      const cartItems = userCart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-
-      // Load wishlist count
-      const userWishlist = JSON.parse(localStorage.getItem(`wishlist_${userId}`) || '[]');
-      const wishlistItems = userWishlist.length;
-
-      // Load orders count (you might want to fetch this from API)
-      const userOrders = JSON.parse(localStorage.getItem(`orders_${userId}`) || '[]');
-      const orders = userOrders.length;
-
-      setStats({
-        orders,
-        wishlistItems,
-        cartItems
+    if (user) {
+      setFormData({
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        email: user.email || "",
+        phone: user.phone || "",
+        address: user.address || ""
       });
-    } catch (error) {
-      console.error("Error loading user stats:", error);
     }
-  };
+  }, [user]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setUser(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSave = async () => {
     setIsSaving(true);
-    
     try {
-      const userLoggedIn = localStorage.getItem("userLoggedIn");
-      if (!userLoggedIn) {
-        toast.error("User not logged in");
-        return;
-      }
-
-      const userData = JSON.parse(userLoggedIn);
-      const userId = userData.id;
-
-      // Save to localStorage
-      localStorage.setItem(`userProfile_${userId}`, JSON.stringify(user));
-
-      // Save to API
-      const response = await fetch(`http://localhost:5000/users/${userId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          firstName: user.firstName,
-          lastName: user.lastName,
-          phone: user.phone,
-          address: user.address
-        })
+      const response = await api.put("/auth/profile", {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        phone: formData.phone,
+        address: formData.address
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to update profile');
-      }
-
-      // Update user data in localStorage if name changed
-      if (user.firstName !== userData.firstName || user.lastName !== userData.lastName) {
-        const updatedUserData = {
-          ...userData,
-          firstName: user.firstName,
-          lastName: user.lastName
-        };
-        localStorage.setItem("userLoggedIn", JSON.stringify(updatedUserData));
-        
-        // Trigger user data update in other components
-        window.dispatchEvent(new Event("userDataUpdated"));
-      }
-
-      toast.success("Profile updated successfully!", {
-        position: "top-right",
-        autoClose: 3000,
-      });
-
+      
+      updateUser(response.data);
+      toast.success("Profile updated successfully!");
     } catch (error) {
       console.error("Error saving profile:", error);
-      toast.error("Failed to update profile. Please try again.", {
-        position: "top-right",
-        autoClose: 5000,
-      });
+      toast.error(error.response?.data?.message || "Failed to update profile");
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleLogout = () => {
-    // Clear all user-specific data
-    const userLoggedIn = localStorage.getItem("userLoggedIn");
-    if (userLoggedIn) {
-      const userData = JSON.parse(userLoggedIn);
-      const userId = userData.id;
-      
-      // Clear user-specific storage
-      localStorage.removeItem(`userProfile_${userId}`);
-      localStorage.removeItem(`cart_${userId}`);
-      localStorage.removeItem(`wishlist_${userId}`);
-    }
-    
-    localStorage.removeItem("userLoggedIn");
-    toast.info("Logged out successfully");
+    logout();
     navigate("/");
   };
 
-  if (isLoading) {
+  if (authLoading || !user) {
     return (
-      <div className="min-h-screen bg-[#F5F0E1] pt-32 pb-12 px-4">
-        <div className="max-w-2xl mx-auto text-center">
-          <div className="animate-pulse text-[#7B4B3A]">Loading profile...</div>
-        </div>
+      <div className="min-h-screen bg-[#F5F0E1] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7B4B3A]"></div>
       </div>
     );
   }
 
+  const { orders } = useContext(AuthContext);
+
   return (
-    <div className="min-h-screen bg-[#F5F0E1] pt-32 pb-12 px-4">
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-4xl font-bold text-[#7B4B3A] text-center mb-8">My Profile</h1>
+    <div className="min-h-screen bg-[#F5F0E1] pt-32 pb-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-5xl mx-auto space-y-8">
         
-        <div className="bg-white rounded-lg shadow-md p-8">
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-[#7B4B3A] mb-2">First Name</label>
-                <input
-                  type="text"
-                  name="firstName"
-                  value={user.firstName}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-[#D2B48C] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7B4B3A] bg-[#F5F0E1] text-[#5C362C] placeholder-[#7B4B3A]"
-                  placeholder="Enter your first name"
-                />
+        {/* Header Section */}
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          <div className="bg-gradient-to-r from-[#7B4B3A] to-[#A36A50] h-32"></div>
+          <div className="px-8 pb-8">
+            <div className="relative flex justify-between items-end -mt-12">
+              <div className="flex items-center space-x-6">
+                <div className="bg-[#FDF8F3] p-2 rounded-full shadow-lg">
+                  <FaUserCircle className="text-8xl text-[#7B4B3A]" />
+                </div>
+                <div className="mt-12">
+                  <h1 className="text-3xl font-bold text-[#5C362C]">
+                    {user.firstName} {user.lastName}
+                  </h1>
+                  <p className="text-[#8B5E3C] font-medium">{user.email}</p>
+                </div>
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-[#7B4B3A] mb-2">Last Name</label>
-                <input
-                  type="text"
-                  name="lastName"
-                  value={user.lastName}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-[#D2B48C] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7B4B3A] bg-[#F5F0E1] text-[#5C362C] placeholder-[#7B4B3A]"
-                  placeholder="Enter your last name"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-[#7B4B3A] mb-2">Email Address</label>
-              <input
-                type="email"
-                name="email"
-                value={user.email}
-                onChange={handleInputChange}
-                disabled
-                className="w-full px-4 py-2 border border-[#D2B48C] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7B4B3A] bg-[#EDE4D3] text-[#5C362C] cursor-not-allowed"
-                placeholder="Your email address"
-              />
-              <p className="text-xs text-[#7B4B3A] mt-1">Email cannot be changed</p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-[#7B4B3A] mb-2">Phone Number</label>
-              <input
-                type="tel"
-                name="phone"
-                value={user.phone}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-[#D2B48C] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7B4B3A] bg-[#F5F0E1] text-[#5C362C] placeholder-[#7B4B3A]"
-                placeholder="Enter your phone number"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-[#7B4B3A] mb-2">Address</label>
-              <textarea
-                name="address"
-                value={user.address}
-                onChange={handleInputChange}
-                rows="3"
-                className="w-full px-4 py-2 border border-[#D2B48C] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7B4B3A] bg-[#F5F0E1] text-[#5C362C] placeholder-[#7B4B3A]"
-                placeholder="Enter your address"
-              />
-            </div>
-
-            <div className="flex gap-4 pt-4">
-              <button
-                onClick={handleSave}
-                disabled={isSaving}
-                className="flex-1 bg-[#7B4B3A] text-[#F5F0E1] py-3 rounded-lg font-semibold hover:bg-[#5C362C] transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              >
-                {isSaving ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Saving...
-                  </>
-                ) : (
-                  "Save Changes"
-                )}
-              </button>
-              <button
-                onClick={() => navigate("/")}
-                className="flex-1 bg-[#D2B48C] text-[#7B4B3A] py-3 rounded-lg font-semibold hover:bg-[#C19A6B] transition duration-300"
-              >
-                Back to Home
-              </button>
               <button
                 onClick={handleLogout}
-                className="px-6 bg-[#A36A50] text-[#F5F0E1] py-3 rounded-lg font-semibold hover:bg-[#8B5E3C] transition duration-300"
+                className="flex items-center gap-2 px-6 py-2.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg font-semibold transition-colors shadow-sm"
               >
-                Logout
+                <FaSignOutAlt /> Logout
               </button>
             </div>
           </div>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-          <div 
-            className="bg-white rounded-lg shadow-md p-6 text-center cursor-pointer hover:shadow-lg transition-shadow duration-300"
-            onClick={() => navigate("/orders")}
-          >
-            <div className="text-2xl font-bold text-[#7B4B3A]">{stats.orders}</div>
-            <div className="text-[#5C362C]">Orders</div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Left Column - Stats */}
+          <div className="lg:col-span-1 space-y-6">
+            <h2 className="text-2xl font-bold text-[#7B4B3A] mb-4">My Dashboard</h2>
+            
+            <div 
+              onClick={() => navigate("/orders")}
+              className="bg-white p-6 rounded-2xl shadow-md border border-transparent hover:border-[#D2B48C] hover:shadow-lg transition-all cursor-pointer group flex items-center justify-between"
+            >
+              <div className="flex items-center gap-4">
+                <div className="p-4 bg-[#FDF8F3] rounded-xl group-hover:bg-[#EDE4D3] transition-colors">
+                  <FaShoppingBag className="text-2xl text-[#7B4B3A]" />
+                </div>
+                <div>
+                  <p className="text-[#8B5E3C] text-sm font-semibold">Total Orders</p>
+                  <p className="text-2xl font-bold text-[#5C362C]">{orders?.length || 0}</p>
+                </div>
+              </div>
+            </div>
+
+            <div 
+              onClick={() => navigate("/wishlist")}
+              className="bg-white p-6 rounded-2xl shadow-md border border-transparent hover:border-[#D2B48C] hover:shadow-lg transition-all cursor-pointer group flex items-center justify-between"
+            >
+              <div className="flex items-center gap-4">
+                <div className="p-4 bg-red-50 rounded-xl group-hover:bg-red-100 transition-colors">
+                  <FaHeart className="text-2xl text-red-500" />
+                </div>
+                <div>
+                  <p className="text-[#8B5E3C] text-sm font-semibold">Wishlist</p>
+                  <p className="text-2xl font-bold text-[#5C362C]">{wishlist?.length || 0}</p>
+                </div>
+              </div>
+            </div>
+
+            <div 
+              onClick={() => navigate("/cart")}
+              className="bg-white p-6 rounded-2xl shadow-md border border-transparent hover:border-[#D2B48C] hover:shadow-lg transition-all cursor-pointer group flex items-center justify-between"
+            >
+              <div className="flex items-center gap-4">
+                <div className="p-4 bg-[#FDF8F3] rounded-xl group-hover:bg-[#EDE4D3] transition-colors">
+                  <FaShoppingCart className="text-2xl text-[#7B4B3A]" />
+                </div>
+                <div>
+                  <p className="text-[#8B5E3C] text-sm font-semibold">In Cart</p>
+                  <p className="text-2xl font-bold text-[#5C362C]">{getCartCount()}</p>
+                </div>
+              </div>
+            </div>
           </div>
-          <div 
-            className="bg-white rounded-lg shadow-md p-6 text-center cursor-pointer hover:shadow-lg transition-shadow duration-300"
-            onClick={() => navigate("/wishlist")}
-          >
-            <div className="text-2xl font-bold text-[#7B4B3A]">{stats.wishlistItems}</div>
-            <div className="text-[#5C362C]">Wishlist Items</div>
-          </div>
-          <div 
-            className="bg-white rounded-lg shadow-md p-6 text-center cursor-pointer hover:shadow-lg transition-shadow duration-300"
-            onClick={() => navigate("/cart")}
-          >
-            <div className="text-2xl font-bold text-[#7B4B3A]">{stats.cartItems}</div>
-            <div className="text-[#5C362C]">Cart Items</div>
+
+          {/* Right Column - Profile Form */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-2xl shadow-md p-8">
+              <h2 className="text-2xl font-bold text-[#7B4B3A] mb-6 border-b border-[#EDE4D3] pb-4">
+                Account Details
+              </h2>
+              
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-bold text-[#5C362C] mb-2">First Name</label>
+                    <input
+                      type="text"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 border border-[#D2B48C] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7B4B3A] bg-[#FAFAFA] text-[#5C362C] transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-[#5C362C] mb-2">Last Name</label>
+                    <input
+                      type="text"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 border border-[#D2B48C] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7B4B3A] bg-[#FAFAFA] text-[#5C362C] transition-all"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-[#5C362C] mb-2">Email Address</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    disabled
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-500 cursor-not-allowed"
+                  />
+                  <p className="text-xs text-gray-500 mt-2 font-medium flex items-center">
+                    <span className="w-1.5 h-1.5 rounded-full bg-gray-400 mr-2"></span>
+                    Email address cannot be changed
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-[#5C362C] mb-2">Phone Number</label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 border border-[#D2B48C] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7B4B3A] bg-[#FAFAFA] text-[#5C362C] transition-all"
+                    placeholder="+1 (555) 000-0000"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-[#5C362C] mb-2">Delivery Address</label>
+                  <textarea
+                    name="address"
+                    value={formData.address}
+                    onChange={handleInputChange}
+                    rows="4"
+                    className="w-full px-4 py-3 border border-[#D2B48C] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7B4B3A] bg-[#FAFAFA] text-[#5C362C] transition-all resize-none"
+                    placeholder="Enter your full street address, city, and zip code"
+                  />
+                </div>
+
+                <div className="pt-6 border-t border-[#EDE4D3] flex justify-end">
+                  <button
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className="px-8 py-3 bg-[#7B4B3A] text-white rounded-xl font-bold hover:bg-[#5C362C] transition-colors flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
+                  >
+                    {isSaving ? (
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      <FaSave className="text-lg" />
+                    )}
+                    {isSaving ? "Saving..." : "Save Changes"}
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+
       </div>
     </div>
   );

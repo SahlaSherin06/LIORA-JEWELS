@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../Context/AuthContext.jsx";
 import { toast } from "react-toastify";
 
+import api from "../api/api";
+
 function LoginPage() {
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
@@ -16,40 +18,30 @@ function LoginPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`http://localhost:5000/users?email=${email}`);
-      const data = await response.json();
+      const response = await api.post("/auth/login", { email, password });
+      const data = response.data;
 
-      if (data.length && data[0].password === password) {
-        const userData = {
-          id: data[0].id,
-          firstName: data[0].firstName,
-          lastName: data[0].lastName,
-          email: data[0].email,
-          role: data[0].role || "user",
-          cart: data[0].cart || [],
-          wishlist: data[0].wishlist || [],
-        };
+      const userData = {
+        id: data._id,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        role: data.role || "user"
+      };
 
-        //  Store user in localStorage first
-        localStorage.setItem("userLoggedIn", JSON.stringify(userData));
-        //  Update context
-        login(userData);
+      // Update context - token is now handled securely via cookies!
+      login(userData);
 
-        //  Navigate based on role AFTER login
-        if (userData.role.toLowerCase() === "admin") {
-          navigate("/dashboard", { replace: true });
-          // toast.success("admin login success")
-        }if(userData.isActive===true){
-          navigate(navigate("/", { replace: true }))
-          // toast.success("user login success")
-        }
-
+      // Navigate based on role AFTER login
+      if (userData.role.toLowerCase() === "admin") {
+        navigate("/dashboard", { replace: true });
       } else {
-        toast.error("Invalid email or password");
+        navigate("/", { replace: true });
       }
+
     } catch (error) {
       console.error("Login error:", error);
-      toast.error("Error during login. Please try again.");
+      toast.error(error.response?.data?.message || "Invalid email or password");
     } finally {
       setIsLoading(false);
     }
@@ -109,3 +101,5 @@ function LoginPage() {
 }
 
 export default LoginPage;
+
+

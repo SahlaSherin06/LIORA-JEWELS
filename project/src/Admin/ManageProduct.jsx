@@ -1,16 +1,28 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import { FaEdit, FaTrash, FaPlus, FaSearch, FaArrowLeft,FaArrowRight,FaBars,FaTimes} from "react-icons/fa";
+import { toast } from 'react-toastify';
+import ConfirmModal from "../Components/ConfirmModal";
 
 const ManageProduct = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalProductsCount, setTotalProductsCount] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+  const [showDeleted, setShowDeleted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [confirmModalConfig, setConfirmModalConfig] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    onConfirm: () => {},
+    isDanger: true,
+    confirmText: "Confirm"
+  });
   const productsPerPage = 10;
 
   // Form state
@@ -38,37 +50,49 @@ const ManageProduct = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Fetch products
+  // Fetch products from backend with search and pagination
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch("http://localhost:5000/products");
+        const url = showDeleted 
+          ? `http://localhost:5000/api/admin/products/deleted?search=${searchTerm}&page=${currentPage}&limit=${productsPerPage}`
+          : `http://localhost:5000/api/products?search=${searchTerm}&page=${currentPage}&limit=${productsPerPage}`;
+          
+        const res = await fetch(url, {
+          credentials: showDeleted ? "include" : "same-origin"
+        });
+        
         if (!res.ok) throw new Error("Failed to fetch products");
-        const data = await res.json()
-        setProducts(data);
-        setFilteredProducts(data);
+        const data = await res.json();
+        if (data.products) {
+          setProducts(data.products);
+          setTotalPages(data.totalPages || 1);
+          setTotalProductsCount(data.totalProducts || 0);
+        } else {
+          setProducts(data);
+          setTotalPages(1);
+          setTotalProductsCount(data.length);
+        }
       } catch (err) {
         console.error("Error fetching products:", err);
       }
     };
-    fetchProducts();
-  }, []);
+    
+    const timeoutId = setTimeout(() => {
+      fetchProducts();
+    }, 400); // Debounce search
+    
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm, currentPage, showDeleted]);
 
-  // Filter products based on search
+  // When search or toggle changes, reset page to 1
   useEffect(() => {
-    const filtered = products.filter(product =>
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.category?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredProducts(filtered);
     setCurrentPage(1);
-  }, [searchTerm, products]);
+  }, [searchTerm, showDeleted]);
 
-  // Pagination calculations
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  // Pagination calculations for text display
+  const indexOfFirstProduct = (currentPage - 1) * productsPerPage;
+  const indexOfLastProduct = Math.min(currentPage * productsPerPage, totalProductsCount);
 
   // Handle form input changes
   const handleInputChange = (e) => {
@@ -104,11 +128,12 @@ const ManageProduct = () => {
         id: Date.now().toString()
       };
 
-      const res = await fetch("http://localhost:5000/products", {
+      const res = await fetch("http://localhost:5000/api/admin/products", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify(newProduct),
       });
 
@@ -133,11 +158,12 @@ const ManageProduct = () => {
         id: editingProduct.id
       };
 
-      const res = await fetch(`http://localhost:5000/products/${editingProduct.id}`, {
+      const res = await fetch(`http://localhost:5000/api/admin/products/${editingProduct.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify(updatedProduct),
       });
 
@@ -153,20 +179,61 @@ const ManageProduct = () => {
   };
 
   // Delete product
-  const handleDeleteProduct = async (productId) => {
-    if (window.confirm("Are you sure you want to delete this product?")) {
-      try {
-        const res = await fetch(`http://localhost:5000/products/${productId}`, {
-          method: "DELETE",
-        });
+  const handleDeleteProduct = (productId) => {
+    setConfirmModalConfig({
+      isOpen: true,
+      title: "Delete Product",
+      message: "Are you sure you want to delete this product? It will be moved to the Trash Bin.",
+      isDanger: true,
+      confirmText: "Delete",
+      onConfirm: async () => {
+        try {
+          const res = await fetch(`http://localhost:5000/api/admin/products/${productId}`, {
+            method: "DELETE",
+            credentials: "include"
+          });
 
-        if (res.ok) {
-          setProducts(prev => prev.filter(p => p.id !== productId));
+          if (res.ok) {
+            setProducts(prev => prev.filter(p => p.id !== productId));
+            toast.success("Product deleted successfully!");
+          } else {
+            toast.error("Failed to delete product.");
+          }
+        } catch (err) {
+          console.error("Error deleting product:", err);
+          toast.error("An error occurred while deleting.");
         }
-      } catch (err) {
-        console.error("Error deleting product:", err);
       }
-    }
+    });
+  };
+
+  // Restore product
+  const handleRestoreProduct = (productId) => {
+    setConfirmModalConfig({
+      isOpen: true,
+      title: "Restore Product",
+      message: "Are you sure you want to restore this product to the active store?",
+      isDanger: false,
+      confirmText: "Restore",
+      onConfirm: async () => {
+        try {
+          const res = await fetch(`http://localhost:5000/api/admin/products/${productId}/restore`, {
+            method: "PATCH",
+            credentials: "include"
+          });
+
+          if (res.ok) {
+            setProducts(prev => prev.filter(p => p.id !== productId));
+            toast.success("Product restored successfully!");
+          } else {
+            toast.error("Failed to restore product.");
+          }
+        } catch (err) {
+          console.error("Error restoring product:", err);
+          toast.error("An error occurred while restoring.");
+        }
+      }
+    });
   };
 
   // Edit product - opens as modal
@@ -185,6 +252,15 @@ const ManageProduct = () => {
 
   return (
     <div className="flex min-h-screen bg-[#F5F0E1]">
+      <ConfirmModal 
+        isOpen={confirmModalConfig.isOpen}
+        onClose={() => setConfirmModalConfig(prev => ({ ...prev, isOpen: false }))}
+        onConfirm={confirmModalConfig.onConfirm}
+        title={confirmModalConfig.title}
+        message={confirmModalConfig.message}
+        isDanger={confirmModalConfig.isDanger}
+        confirmText={confirmModalConfig.confirmText}
+      />
       {/* Sidebar */}
       <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
       
@@ -239,27 +315,43 @@ const ManageProduct = () => {
               />
             </div>
 
-            {/* Add Product Button */}
-            <button
-              onClick={() => {
-                resetForm();
-                setShowAddForm(true);
-              }}
-              className="flex items-center gap-2 bg-[#7B4B3A] text-[#F5F0E1] px-4 py-2 rounded-lg hover:bg-[#5C362C] transition-colors duration-200 w-full sm:w-auto justify-center"
-            >
-              <FaPlus />
-              Add New Product
-            </button>
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <button
+                onClick={() => {
+                  setShowDeleted(!showDeleted);
+                  setCurrentPage(1);
+                }}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors duration-200 w-full sm:w-auto justify-center ${
+                  showDeleted 
+                    ? "bg-red-100 text-red-700 hover:bg-red-200 border border-red-300" 
+                    : "bg-[#EDE4D3] text-[#7B4B3A] hover:bg-[#D2B48C] border border-[#B88A6F]"
+                }`}
+              >
+                {showDeleted ? "View Active" : "View Trash"}
+              </button>
+              
+              <button
+                onClick={() => {
+                  resetForm();
+                  setShowAddForm(true);
+                }}
+                className="flex items-center gap-2 bg-[#7B4B3A] text-[#F5F0E1] px-4 py-2 rounded-lg hover:bg-[#5C362C] transition-colors duration-200 w-full sm:w-auto justify-center"
+              >
+                <FaPlus />
+                Add New Product
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Products Table */}
         <div className="bg-white rounded-xl shadow-lg border border-[#7B4B3A]/30 overflow-hidden">
           <div className="px-4 py-3 font-semibold text-lg" style={{ backgroundColor: "#7B4B3A", color: "#F5F0E1" }}>
-            Products ({filteredProducts.length})
+            Products ({totalProductsCount})
           </div>
           
-          {currentProducts.length === 0 ? (
+          {products.length === 0 ? (
             <div className="p-8 text-center">
               <p className="text-gray-500 text-lg font-medium">No products found</p>
               <p className="text-gray-400 text-sm mt-1">
@@ -279,7 +371,7 @@ const ManageProduct = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {currentProducts.map((product) => (
+                    {products.map((product) => (
                       <tr key={product.id} className="hover:bg-gray-100 transition">
                         <td className="px-4 py-4">
                           <div className="flex items-center">
@@ -306,20 +398,31 @@ const ManageProduct = () => {
                         </td>
                         <td className="px-4 py-4">
                           <div className="flex gap-2">
-                            <button
-                              onClick={() => handleEditProduct(product)}
-                              className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                              title="Edit Product"
-                            >
-                              <FaEdit />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteProduct(product.id)}
-                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                              title="Delete Product"
-                            >
-                              <FaTrash />
-                            </button>
+                            {showDeleted ? (
+                              <button
+                                onClick={() => handleRestoreProduct(product.id)}
+                                className="px-3 py-1 bg-green-100 text-green-700 hover:bg-green-200 rounded-lg transition-colors text-sm font-medium border border-green-300"
+                              >
+                                Restore
+                              </button>
+                            ) : (
+                              <>
+                                <button
+                                  onClick={() => handleEditProduct(product)}
+                                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                  title="Edit Product"
+                                >
+                                  <FaEdit />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteProduct(product.id)}
+                                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                  title="Delete Product"
+                                >
+                                  <FaTrash />
+                                </button>
+                              </>
+                            )}
                           </div>
                         </td>
                       </tr>
@@ -332,7 +435,7 @@ const ManageProduct = () => {
               {totalPages > 1 && (
                 <div className="px-4 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div className="text-sm text-gray-700">
-                    Showing {indexOfFirstProduct + 1} to {Math.min(indexOfLastProduct, filteredProducts.length)} of {filteredProducts.length} products
+                    Showing {indexOfFirstProduct + 1} to {indexOfLastProduct} of {totalProductsCount} products
                   </div>
                   <div className="flex gap-2">
                     <button
@@ -401,7 +504,7 @@ const ManageProduct = () => {
                     value={formData.name}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7B4B3A]"
+                    className="w-full px-3 py-2 border border-[#B88A6F] bg-[#EDE4D3] text-[#7B4B3A] placeholder-[#7B4B3A]/60 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7B4B3A]"
                   />
                 </div>
                 <div>
@@ -414,7 +517,7 @@ const ManageProduct = () => {
                     required
                     step="0.01"
                     min="0"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7B4B3A]"
+                    className="w-full px-3 py-2 border border-[#B88A6F] bg-[#EDE4D3] text-[#7B4B3A] placeholder-[#7B4B3A]/60 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7B4B3A]"
                   />
                 </div>
                 <div>
@@ -425,7 +528,7 @@ const ManageProduct = () => {
                     value={formData.image}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7B4B3A]"
+                    className="w-full px-3 py-2 border border-[#B88A6F] bg-[#EDE4D3] text-[#7B4B3A] placeholder-[#7B4B3A]/60 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7B4B3A]"
                   />
                 </div>
                 <div>
@@ -435,7 +538,7 @@ const ManageProduct = () => {
                     name="category"
                     value={formData.category}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7B4B3A]"
+                    className="w-full px-3 py-2 border border-[#B88A6F] bg-[#EDE4D3] text-[#7B4B3A] placeholder-[#7B4B3A]/60 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7B4B3A]"
                   />
                 </div>
                 <div className="md:col-span-2">
@@ -445,7 +548,7 @@ const ManageProduct = () => {
                     value={formData.description}
                     onChange={handleInputChange}
                     rows="3"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7B4B3A]"
+                    className="w-full px-3 py-2 border border-[#B88A6F] bg-[#EDE4D3] text-[#7B4B3A] placeholder-[#7B4B3A]/60 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7B4B3A]"
                   />
                 </div>
                 <div>
@@ -456,7 +559,7 @@ const ManageProduct = () => {
                     value={formData.stock}
                     onChange={handleInputChange}
                     min="0"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7B4B3A]"
+                    className="w-full px-3 py-2 border border-[#B88A6F] bg-[#EDE4D3] text-[#7B4B3A] placeholder-[#7B4B3A]/60 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7B4B3A]"
                   />
                 </div>
               </div>

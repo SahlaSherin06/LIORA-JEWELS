@@ -28,7 +28,7 @@ export default function ProductCard({ product, onQuickView }) {
 
   const fetchLatestStock = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/products/${product.id}`);
+      const response = await fetch(`http://localhost:5000/api/products/${product.id}`);
       if (response.ok) {
         const latestProduct = await response.json();
         setCurrentStock(latestProduct.stock || latestProduct.quantity || 0);
@@ -172,7 +172,7 @@ export default function ProductCard({ product, onQuickView }) {
 
       <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
         <button
-          onClick={()=>addToCart(product)}
+          onClick={handleAddToCart}
           disabled={currentStock <= 0}
           className={`flex items-center gap-2 px-3 py-2 rounded transition duration-200 ${
             currentStock <= 0 

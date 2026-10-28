@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../Context/AuthContext.jsx";
 import { toast } from 'react-toastify';
+import api from "../api/api";
 
 function RegisterPage() {
   const navigate = useNavigate();
@@ -30,60 +31,14 @@ function RegisterPage() {
     setIsLoading(true);
 
     try {
-      // Check if user already exists
-      const checkResponse = await fetch(`http://localhost:5000/users?email=${email}`);
-      const existingUsers = await checkResponse.json();
+      const newUser = { firstName, lastName, email, password };
+      const response = await api.post("/auth/register", newUser);
 
-      if (existingUsers.length > 0) {
-        toast.error("This email is already registered. Please login.");
-        return;
-      }
-
-      // Register new user with complete structure
-      const newUser = {
-        id: Math.random().toString(36).substr(2, 9), // Generate unique ID
-        firstName,
-        lastName,
-        email,
-        password,
-        role: "user",
-        isAuthenticated: true,
-        cart: [],
-        wishlist: [],
-        shippingAddress: [],
-        orders: []
-      };
-
-      const response = await fetch("http://localhost:5000/users", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newUser),
-      });
-
-      if (!response.ok) throw new Error("Failed to register user");
-
-      await response.json();
-      
-      // Create user data for login (without password)
-      const userData = {
-        id: newUser.id,
-        firstName: newUser.firstName,
-        lastName: newUser.lastName,
-        email: newUser.email,
-        role: newUser.role,
-        cart: newUser.cart,
-        wishlist: newUser.wishlist
-      };
-      
-      // Store in localStorage
-      localStorage.setItem("userLoggedIn", JSON.stringify(userData));
-      
-      login(userData);
-      toast.success("Registration successful!");
-      navigate("/");
+      toast.success("Registration successful! Please login.");
+      navigate("/login");
     } catch (err) {
       console.error(err);
-      toast.error("Error registering user. Try again.");
+      toast.error(err.response?.data?.message || "Error registering user. Try again.");
     } finally {
       setIsLoading(false);
     }
@@ -172,3 +127,4 @@ function RegisterPage() {
 }
 
 export default RegisterPage;
+

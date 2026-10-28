@@ -37,10 +37,8 @@ function Checkout() {
     
     if (immediateCheckout) {
       // ✅ FIXED: Check localStorage first for immediate checkout data
-      const userLoggedIn = localStorage.getItem("userLoggedIn");
-      if (userLoggedIn) {
-        const userData = JSON.parse(userLoggedIn);
-        const userId = userData.id;
+      if (user) {
+        const userId = user.id;
         const immediateCheckoutData = localStorage.getItem(`immediateCheckout_${userId}`);
         
         if (immediateCheckoutData) {
@@ -127,10 +125,11 @@ function Checkout() {
       const order = {
         id: newOrderNumber,
         items: cartItems.map(item => ({
-          id: item.id,
+          id: item.id || item._id || item.product,
+          product: item.product || item.id || item._id,
           name: item.name,
-          price: item.price,
-          quantity: item.quantity,
+          price: typeof item.price === 'string' ? parseFloat(item.price.replace(/[^0-9.]/g, '')) : item.price,
+          quantity: item.quantity || 1,
           image: item.image,
           category: item.category
         })),
@@ -157,7 +156,7 @@ function Checkout() {
 
     } catch (error) {
       console.error("Error processing order:", error);
-      alert("There was an error processing your order. Please try again.");
+      // The actual error toast is handled in AuthContext.jsx
     } finally {
       setIsSubmitting(false);
     }

@@ -5,7 +5,11 @@ import { AuthContext } from '../Context/AuthContext';
 import { Navigate } from 'react-router-dom';
 
 export const ProtecterRouter = ({ children, requireAdmin = false }) => {
-  const { user } = useContext(AuthContext);
+  const { user, loading } = useContext(AuthContext);
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
 
   if (!user) {
     // User not logged in
@@ -21,9 +25,16 @@ export const ProtecterRouter = ({ children, requireAdmin = false }) => {
 };
 
 export const PublicRouter = ({ children }) => {
-  const { user } = useContext(AuthContext);
+  const { user, loading } = useContext(AuthContext);
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
 
   if (user) {
+    if (user.role?.toLowerCase() === 'admin') {
+      return <Navigate to="/dashboard" replace />;
+    }
     return <Navigate to="/" replace />;
   }
 

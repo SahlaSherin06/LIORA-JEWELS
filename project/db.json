@@ -513,7 +513,23 @@
           "quantity": 1
         }
       ],
-      "wishlist": [],
+      "wishlist": [
+        {
+          "id": "8",
+          "name": "Luxury Pendant Necklace",
+          "price": 399,
+          "category": "Necklaces",
+          "image": "https://i.pinimg.com/1200x/e3/e7/ce/e3e7ce29f84a1de717a503317e515fa2.jpg",
+          "rating": 5,
+          "description": "Pendant necklace with luxurious appeal and exquisite detailing.",
+          "reviews": [
+            "Looks expensive!",
+            "Elegant pendant.",
+            "Very classy."
+          ],
+          "stock": 10
+        }
+      ],
       "shippingAddress": [],
       "orders": [
         {
@@ -958,6 +974,99 @@
       ],
       "shippingAddress": [],
       "orders": []
+    },
+    {
+      "id": "iqvs8ndvn",
+      "firstName": "adil",
+      "lastName": "hameed",
+      "email": "adil@gmail.com",
+      "password": "123456",
+      "role": "user",
+      "isAuthenticated": true,
+      "cart": [
+        {
+          "id": "50",
+          "name": "Golden Earrings Set",
+          "price": 269,
+          "category": "Earrings",
+          "image": "https://i.pinimg.com/736x/ca/5f/11/ca5f1174584994d2dc30b43dc23b2543.jpg",
+          "rating": 5,
+          "description": "Elegant golden earrings set that complements any outfit.",
+          "reviews": [
+            "Looks premium.",
+            "Very stylish.",
+            "Perfect for parties."
+          ],
+          "stock": 21,
+          "quantity": 1
+        }
+      ],
+      "wishlist": [
+        {
+          "id": "50",
+          "name": "Golden Earrings Set",
+          "price": 269,
+          "category": "Earrings",
+          "image": "https://i.pinimg.com/736x/ca/5f/11/ca5f1174584994d2dc30b43dc23b2543.jpg",
+          "rating": 5,
+          "description": "Elegant golden earrings set that complements any outfit.",
+          "reviews": [
+            "Looks premium.",
+            "Very stylish.",
+            "Perfect for parties."
+          ],
+          "stock": 21
+        }
+      ],
+      "shippingAddress": [],
+      "orders": [
+        {
+          "id": "LIORA-1782276560709",
+          "items": [
+            {
+              "id": "50",
+              "name": "Golden Earrings Set",
+              "price": 269,
+              "quantity": 1,
+              "image": "https://i.pinimg.com/736x/ca/5f/11/ca5f1174584994d2dc30b43dc23b2543.jpg",
+              "category": "Earrings"
+            }
+          ],
+          "total": 269,
+          "shippingInfo": {
+            "firstName": "adil",
+            "lastName": "hameed",
+            "email": "adil@gmail.com",
+            "phone": "9975103234",
+            "address": "nsx ax"
+          },
+          "userId": "iqvs8ndvn",
+          "userName": "adil hameed",
+          "orderDate": "2026-06-24T04:49:20.709Z",
+          "status": "confirmed",
+          "estimatedDelivery": "2026-07-01T04:49:20.714Z",
+          "paymentStatus": "paid"
+        }
+      ],
+      "tempCart": [
+        {
+          "id": "47",
+          "name": "Diamond Watch Silver",
+          "price": 1580,
+          "category": "Watches",
+          "image": "https://i.pinimg.com/736x/ff/9f/47/ff9f47e230e0f9ac1f68be70d30d365f.jpg",
+          "rating": 5,
+          "description": "Luxury silver watch adorned with sparkling diamonds.",
+          "reviews": [
+            "Absolutely gorgeous.",
+            "Premium feel.",
+            "Perfect gift."
+          ],
+          "stock": 3,
+          "quantity": 3,
+          "total": 4740
+        }
+      ]
     }
   ],
   "products": [

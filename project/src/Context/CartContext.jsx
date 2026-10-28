@@ -1,7 +1,7 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import { AuthContext } from "./AuthContext";
 import { toast } from "react-toastify";
-
+import api from "../api/api";
 
 export const CartContext = createContext();
 
@@ -9,119 +9,82 @@ export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
   const { user, isLoggedIn } = useContext(AuthContext);
 
-  // Load cart from localStorage when user changes
-  useEffect(() => {
-    if (isLoggedIn && user) {
-      const userCart = JSON.parse(localStorage.getItem(`cart_${user.id}`)) || [];
-      setCart(userCart);
+  const fetchCart = async () => {
+    if (isLoggedIn) {
+      try {
+        const res = await api.get("/users/cart");
+        setCart(res.data || []);
+      } catch (error) {
+        console.error("Error fetching cart:", error);
+      }
     } else {
       setCart([]);
     }
-  }, [user, isLoggedIn]);
+  };
+
+  useEffect(() => {
+    fetchCart();
+    
+    const handleAuthChange = () => fetchCart();
+    window.addEventListener("userStatusVerified", handleAuthChange);
+    window.addEventListener("userLoggedOut", () => setCart([]));
+    
+    return () => {
+      window.removeEventListener("userStatusVerified", handleAuthChange);
+      window.removeEventListener("userLoggedOut", () => setCart([]));
+    };
+  }, [isLoggedIn]);
 
   const addToCart = async (product, quantity = 1) => {
-    if (!isLoggedIn || !user) return false;
-
-    const existing = cart.find((p) => p.id === product.id);
-    let updatedCart;
-    
-    if (existing) {
-      updatedCart = cart.map((p) =>
-        p.id === product.id ? { ...p, quantity: (p.quantity || 1) + quantity } : p
-      );
-      toast.info("🛒 Cart Quantity Updated")
-    } else {
-      updatedCart = [...cart, { ...product, quantity }];
-      toast.success("🛒 Added to cart");
+    if (!isLoggedIn || !user) {
+      toast.warning("Please login to add to cart");
+      return false;
     }
 
-    setCart(updatedCart);
-    localStorage.setItem(`cart_${user.id}`, JSON.stringify(updatedCart));
-
-    // Save to API
     try {
-      const response = await fetch(`http://localhost:5000/users/${user.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cart: updatedCart })
-      });
-      if (!response.ok) throw new Error('Failed to update cart in API');
+      // Backend expects productId
+      const productId = product._id || product.id;
+      await api.post("/users/cart", { productId, quantity });
+      
+      // Fetch fully populated cart with latest stock/images
+      await fetchCart();
+      toast.success("🛒 Added to cart");
+      return true;
     } catch (error) {
-      console.error("Error updating cart in API:", error);
+      console.error("Error adding to cart:", error);
+      toast.error(error.response?.data?.message || "Failed to add to cart");
+      return false;
     }
-
-    window.dispatchEvent(new Event("cartUpdated"));
-    return true;
   };
 
   const removeFromCart = async (productId) => {
-    if (!isLoggedIn || !user) return false;
-
-    const updatedCart = cart.filter((item) => item.id !== productId);
-    setCart(updatedCart);
-    localStorage.setItem(`cart_${user.id}`, JSON.stringify(updatedCart));
-
-    // Save to API
+    if (!isLoggedIn) return;
     try {
-      const response = await fetch(`http://localhost:5000/users/${user.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cart: updatedCart })
-      });
-      if (!response.ok) throw new Error('Failed to update cart in API');
+      await api.delete(`/users/cart/${productId}`);
+      await fetchCart();
     } catch (error) {
-      console.error("Error updating cart in API:", error);
+      console.error("Error removing from cart:", error);
     }
-
-    window.dispatchEvent(new Event("cartUpdated"));
-    return true;
   };
 
   const updateQuantity = async (productId, quantity) => {
-    if (!isLoggedIn || !user || quantity < 1) return false;
-
-    const updatedCart = cart.map((item) =>
-      item.id === productId ? { ...item, quantity } : item
-    );
-    setCart(updatedCart);
-    localStorage.setItem(`cart_${user.id}`, JSON.stringify(updatedCart));
-
-    // Save to API
+    if (!isLoggedIn) return;
     try {
-      const response = await fetch(`http://localhost:5000/users/${user.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cart: updatedCart })
-      });
-      if (!response.ok) throw new Error('Failed to update cart in API');
+      await api.put(`/users/cart/${productId}`, { quantity });
+      await fetchCart();
     } catch (error) {
-      console.error("Error updating cart in API:", error);
+      console.error("Error updating quantity:", error);
     }
-
-    window.dispatchEvent(new Event("cartUpdated"));
-    return true;
   };
 
   const clearCart = async () => {
-    if (!isLoggedIn || !user) return false;
-
-    setCart([]);
-    localStorage.setItem(`cart_${user.id}`, JSON.stringify([]));
-
-    // Save to API
+    if (!isLoggedIn) return;
     try {
-      const response = await fetch(`http://localhost:5000/users/${user.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cart: [] })
-      });
-      if (!response.ok) throw new Error('Failed to update cart in API');
+      await api.delete("/users/cart");
+      await fetchCart();
     } catch (error) {
-      console.error("Error updating cart in API:", error);
+      console.error("Error clearing cart:", error);
     }
-
-    window.dispatchEvent(new Event("cartUpdated"));
-    return true;
   };
 
   const getCartCount = () => {
@@ -148,7 +111,7 @@ export function CartProvider({ children }) {
     clearCart,
     getCartCount,
     getTotalPrice,
-    isInCart: (productId) => cart.some(item => item.id === productId)
+    isInCart: (productId) => cart.some(item => (item.product || item.id) === productId)
   };
 
   return (
@@ -157,4 +120,3 @@ export function CartProvider({ children }) {
     </CartContext.Provider>
   );
 }
-

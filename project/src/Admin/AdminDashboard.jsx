@@ -31,20 +31,20 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [usersRes, productsRes] = await Promise.all([
-          fetch("http://localhost:5000/users"),
-          fetch("http://localhost:5000/products"),
+        const [usersRes, productsRes, ordersRes] = await Promise.all([
+          fetch("http://localhost:5000/api/admin/users", { credentials: "include" }),
+          fetch("http://localhost:5000/api/products"), // public
+          fetch("http://localhost:5000/api/admin/orders", { credentials: "include" }),
         ]);
         const usersData = await usersRes.json();
         const productsData = await productsRes.json();
+        const ordersData = await ordersRes.json();
 
-        const allOrders = usersData.flatMap(u =>
-          (u.orders || []).map(order => ({
-            ...order,
-            customerName: u.name,
-            date: new Date(order.date || order.orderDate),
-          }))
-        );
+        const allOrders = ordersData.map(order => ({
+          ...order,
+          customerName: order.userName,
+          date: new Date(order.createdAt || order.date),
+        }));
 
         setUsers(usersData);
         setProducts(productsData);

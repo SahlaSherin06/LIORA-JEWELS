@@ -7,56 +7,21 @@ import { AuthContext } from "../Context/AuthContext";
 
 export default function CartPage() {
   const { cart, removeFromCart, updateQuantity, getTotalPrice } = useContext(CartContext);
-  const { isLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn, loading } = useContext(AuthContext);
   const navigate = useNavigate();
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-  const [cartItemsWithStock, setCartItemsWithStock] = useState([]);
 
   useEffect(() => {
-    const checkAuthentication = () => {
-      const userLoggedIn = localStorage.getItem("userLoggedIn");
-      
-      if (!isLoggedIn && !userLoggedIn) {
+    if (!loading) {
+      if (!isLoggedIn) {
         navigate("/login");
       } else {
         setIsCheckingAuth(false);
       }
-    };
-
-    const timer = setTimeout(checkAuthentication, 100);
-    
-    return () => clearTimeout(timer);
-  }, [isLoggedIn, navigate]);
-
-  // Fetch latest stock for cart items
-  useEffect(() => {
-    const fetchCartItemsStock = async () => {
-      const updatedCart = await Promise.all(
-        cart.map(async (item) => {
-          try {
-            const response = await fetch(`http://localhost:5000/products/${item.id}`);
-            if (response.ok) {
-              const latestProduct = await response.json();
-              return {
-                ...item,
-                currentStock: latestProduct.stock || latestProduct.quantity || 0
-              };
-            }
-          } catch (error) {
-            console.error("Error fetching stock for item:", error);
-          }
-          return { ...item, currentStock: item.stock || 0 };
-        })
-      );
-      setCartItemsWithStock(updatedCart);
-    };
-
-    if (cart.length > 0) {
-      fetchCartItemsStock();
-    } else {
-      setCartItemsWithStock([]);
     }
-  }, [cart]);
+  }, [isLoggedIn, loading, navigate]);
+
+
 
   if (isCheckingAuth) {
     return (
@@ -78,7 +43,7 @@ export default function CartPage() {
 
   const handleUpdateQuantity = async (id, qty) => {
     // Get the product from cart to check stock
-    const cartItem = cartItemsWithStock.find(item => item.id === id);
+    const cartItem = cart.find(item => (item.id || item.product) === id);
     
     // Check if requested quantity exceeds available stock
     if (cartItem && cartItem.currentStock !== undefined && qty > cartItem.currentStock) {
@@ -123,9 +88,9 @@ export default function CartPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           <div className="md:col-span-2 space-y-6">
-            {cartItemsWithStock.map((item) => (
+            {cart.map((item, index) => (
               <div
-                key={item.id}
+                key={item.id || item.product || index}
                 className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-[#D2B48C] pb-4"
               >
                 <div className="flex items-center gap-4">
@@ -159,7 +124,7 @@ export default function CartPage() {
 
                 <div className="flex items-center gap-3">
                   <button
-                    onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                    onClick={() => handleUpdateQuantity(item.id || item.product, item.quantity - 1)}
                     disabled={item.quantity <= 1}
                     className={`px-3 py-1 rounded transition ${
                       item.quantity <= 1 
@@ -171,7 +136,7 @@ export default function CartPage() {
                   </button>
                   <span className="font-semibold text-[#5C362C]">{item.quantity}</span>
                   <button
-                    onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                    onClick={() => handleUpdateQuantity(item.id || item.product, item.quantity + 1)}
                     disabled={item.currentStock !== undefined && item.quantity >= item.currentStock}
                     className={`px-3 py-1 rounded transition ${
                       item.currentStock !== undefined && item.quantity >= item.currentStock
@@ -183,7 +148,7 @@ export default function CartPage() {
                   </button>
 
                   <button
-                    onClick={() => handleRemoveItem(item.id)}
+                    onClick={() => handleRemoveItem(item.id || item.product)}
                     className="ml-3 text-[#A33E3E] hover:text-red-700"
                   >
                     <FaTrashAlt />

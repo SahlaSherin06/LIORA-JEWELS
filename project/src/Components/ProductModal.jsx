@@ -3,24 +3,23 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { CartContext } from "../Context/CartContext";
+import { AuthContext } from "../Context/AuthContext";
 
 export default function ProductModal({ product, onClose }) {
   const [visible, setVisible] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [isInCart, setIsInCart] = useState(false);
   const [isInWishlist, setIsInWishlist] = useState(false);
-  const [user, setUser] = useState(null);
   const [currentStock, setCurrentStock] = useState(product.stock || product.quantity || 0);
   const navigate = useNavigate();
   const { addToCart, isInCart: checkInCart, updateQuantity, cart } = useContext(CartContext);
+  const { user } = useContext(AuthContext);
 
   const priceNumber = parseFloat((product.price || 0).toString().replace(/[^0-9.]/g, "")) || 0;
   const rating = product.rating || product.avgRating || 4;
 
   useEffect(() => {
     setVisible(true);
-    const userLoggedIn = localStorage.getItem("userLoggedIn");
-    if (userLoggedIn) setUser(JSON.parse(userLoggedIn));
     checkCartWishlist();
     
     // Fetch latest stock from API
@@ -29,7 +28,7 @@ export default function ProductModal({ product, onClose }) {
 
   const fetchLatestStock = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/products/${product.id}`);
+      const response = await fetch(`http://localhost:5000/api/products/${product.id}`);
       if (response.ok) {
         const latestProduct = await response.json();
         setCurrentStock(latestProduct.stock || latestProduct.quantity || 0);
@@ -47,10 +46,8 @@ export default function ProductModal({ product, onClose }) {
       if (cartItem) setQuantity(cartItem.quantity || 1);
     }
 
-    const userLoggedIn = localStorage.getItem("userLoggedIn");
-    if (!userLoggedIn) return;
-    const userData = JSON.parse(userLoggedIn);
-    const wishlist = JSON.parse(localStorage.getItem(`wishlist_${userData.id}`) || "[]");
+    if (!user) return;
+    const wishlist = JSON.parse(localStorage.getItem(`wishlist_${user.id}`) || "[]");
     setIsInWishlist(!!wishlist.find((p) => p.id === product.id));
   };
 
@@ -74,7 +71,7 @@ export default function ProductModal({ product, onClose }) {
   };
 
   const handleAddToCart = async () => {
-    if (!localStorage.getItem("userLoggedIn")) return navigate("/login");
+    if (!user) return navigate("/login");
     
     // Check stock before adding to cart
     if (currentStock <= 0) {
@@ -92,9 +89,8 @@ export default function ProductModal({ product, onClose }) {
   };
 
   const toggleWishlist = async () => {
-    if (!localStorage.getItem("userLoggedIn")) return navigate("/login");
-    const userData = JSON.parse(localStorage.getItem("userLoggedIn"));
-    const wishlistKey = `wishlist_${userData.id}`;
+    if (!user) return navigate("/login");
+    const wishlistKey = `wishlist_${user.id}`;
     const wishlist = JSON.parse(localStorage.getItem(wishlistKey) || "[]");
 
     let updatedWishlist;
@@ -113,7 +109,7 @@ export default function ProductModal({ product, onClose }) {
   };
 
   const handleBuyNow = async () => {
-    if (!localStorage.getItem("userLoggedIn")) return navigate("/login");
+    if (!user) return navigate("/login");
     
     // Check stock before proceeding to checkout
     if (currentStock <= 0) {
@@ -122,9 +118,7 @@ export default function ProductModal({ product, onClose }) {
     }
 
     try {
-      const userLoggedIn = localStorage.getItem("userLoggedIn");
-      const userData = JSON.parse(userLoggedIn);
-      const userId = userData.id;
+      const userId = user.id;
 
       // ✅ FIXED: Use the current quantity from state, not hardcoded 1
       const tempCartItem = {
@@ -142,7 +136,7 @@ export default function ProductModal({ product, onClose }) {
       
       // Also save to database if needed
       try {
-        const response = await fetch(`http://localhost:5000/users/${userId}`, {
+        const response = await fetch(`http://localhost:5000/api/users/${userId}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
